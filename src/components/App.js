@@ -6,8 +6,13 @@ import Directions from './Directions/Directions';
 
 class App extends Component {
   state = {
-    currentLocation: { lat: 49.2035681, lng: -122.9126894 },
-    directions: {}
+    currentLocation: {},
+    directions: {},
+    lat: 49.201,
+    lng: -122.91,
+    cars: {},
+    nearby: {},
+    available: {}
   };
 
   setDirections = (directions) => {
@@ -29,21 +34,58 @@ class App extends Component {
         this.setState({ currentLocation: position });
       });
     }
+    this.handleLoadNearby();
+    // this.handleLoadCars();
+    // this.handleLoadAvailability();
+  }
+
+  handleLoadNearby(lat = null, lng = null) {
+    ModoStore.getNearby(this.state.lat, this.state.lng).then(() => {
+      if (ModoStore.isLoading === false) {
+        this.setState({ nearby: ModoStore.nearby });
+        console.log(this.state.nearby);
+      }
+    });
+  }
+
+  handleLoadCars() {
+    ModoStore.getCars().then(() => {
+      if (ModoStore.isLoading === false) {
+        this.setState({ nearby: ModoStore.cars });
+        console.log(this.state.cars);
+      }
+    });
+  }
+
+  handleLoadAvailability() {
+    ModoStore.getAvailability().then(() => {
+      if (ModoStore.isLoading === false) {
+        this.setState({ available: ModoStore.availability });
+        console.log(this.state.availability);
+      }
+    });
   }
 
   render() {
-    ModoStore.getCarList().then(() => {
-      console.log(ModoStore.car_list);
-    });
+    const { currentLocation } = this.state;
     return (
       <div className="App">
         <div> Hey </div>
-        <MapWithSearchAndDirections
-          currentLocation={this.state.currentLocation}
-          setDirections={this.setDirections}
-        />
-        <Directions directions={this.state.directions} />
-      </div>
+        {(() => {
+          if (currentLocation && currentLocation.lat) {
+            return (
+              <div>
+                <MapWithSearchAndDirections
+                  currentLocation={this.state.currentLocation}
+                  setDirections={this.setDirections}
+                />
+                <Directions directions={this.state.directions} />
+              </div>
+            );
+          }
+          return <div>Loading...</div>;
+        })()}
+      </div >
     );
   }
 }
