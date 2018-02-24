@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 // import FetchResource from '../Resources/FetchResource';
 import BasicMap from './Map/BasicMap';
-import MapWithSearchAndDirections from './Map/MapWithSearchAndDirections';
+import MapWithSearch from './Map/MapWithSearch';
 import MapWithDirectionsRenderer from './Map/MapWithDirectionsRenderer';
 
 class App extends Component {
