@@ -15,14 +15,6 @@ class App extends Component {
     available: {}
   };
 
-  setDirections = (directions) => {
-    console.log('settind directions in app');
-    console.log(directions);
-    this.setState({
-      directions: directions
-    });
-  }
-
   componentDidMount() {
     if (navigator && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(pos => {
@@ -39,11 +31,17 @@ class App extends Component {
     // this.handleLoadAvailability();
   }
 
+  setDirections = directions => {
+    this.setState({
+      directions: directions
+    });
+  };
+
   handleLoadNearby(lat = null, lng = null) {
     ModoStore.getNearby(this.state.lat, this.state.lng).then(() => {
       if (ModoStore.isLoading === false) {
         this.setState({ nearby: ModoStore.nearby });
-        console.log(this.state.nearby);
+        //console.log(this.state.nearby);
       }
     });
   }
@@ -52,7 +50,7 @@ class App extends Component {
     ModoStore.getCars().then(() => {
       if (ModoStore.isLoading === false) {
         this.setState({ nearby: ModoStore.cars });
-        console.log(this.state.cars);
+        //console.log(this.state.cars);
       }
     });
   }
@@ -61,13 +59,13 @@ class App extends Component {
     ModoStore.getAvailability().then(() => {
       if (ModoStore.isLoading === false) {
         this.setState({ available: ModoStore.availability });
-        console.log(this.state.availability);
+        //console.log(this.state.availability);
       }
     });
   }
 
   render() {
-    const { currentLocation } = this.state;
+    const { currentLocation, directions } = this.state;
     return (
       <div className="App">
         <div> Hey </div>
@@ -79,13 +77,15 @@ class App extends Component {
                   currentLocation={this.state.currentLocation}
                   setDirections={this.setDirections}
                 />
-                <Directions directions={this.state.directions} />
+                {directions &&
+                  directions.routes &&
+                  <Directions directions={this.state.directions} />}
               </div>
             );
           }
           return <div>Loading...</div>;
         })()}
-      </div >
+      </div>
     );
   }
 }

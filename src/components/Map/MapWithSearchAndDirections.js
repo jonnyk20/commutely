@@ -64,7 +64,7 @@ const MapWithASearch = compose(
             this.state.center
           );
           destination = nextMarkers[0];
-          console.log('destination', destination);
+          // console.log('destination', destination);
           this.setState({
             center: nextCenter,
             markers: [this.state.markers[0], nextMarkers[0]]
@@ -74,7 +74,7 @@ const MapWithASearch = compose(
           const DirectionsService = new google.maps.DirectionsService();
           DirectionsService.route(
             {
-              origin: douglas,
+              origin: currentLocation,
               destination: destination.position,
               travelMode: google.maps.TravelMode.TRANSIT
             },
@@ -97,7 +97,6 @@ const MapWithASearch = compose(
   withGoogleMap
 )(props =>
   <div>
-    {console.log('this props:', props)}
     <GoogleMap
       center={props.currentLocation}
       defaultZoom={15}
