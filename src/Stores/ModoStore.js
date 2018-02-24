@@ -22,7 +22,7 @@ class ModoStore {
     });
   }
 
-  getCarList() {
+  getCars() {
     return new Promise(resolve => {
       this.isLoading = true;
       FetchResource.callModo('car_list')

@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
+
 import ModoStore from '../Stores/ModoStore';
-import BasicMap from './Map/BasicMap';
+import MapWithSearchAndDirections from './Map/MapWithSearchAndDirections';
+import Directions from './Directions/Directions';
 
 class App extends Component {
   state = {
@@ -12,6 +14,16 @@ class App extends Component {
   };
 
   componentDidMount() {
+    if (navigator && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(pos => {
+        const coords = pos.coords;
+        const position = {
+          lat: coords.latitude,
+          lng: coords.longitude
+        };
+        this.setState({ currentLocation: position });
+      });
+    }
     this.handleLoadNearby();
     // this.handleLoadCars();
     // this.handleLoadAvailability();
@@ -27,9 +39,9 @@ class App extends Component {
   }
 
   handleLoadCars() {
-    ModoStore.getCarList().then(() => {
+    ModoStore.getCars().then(() => {
       if (ModoStore.isLoading === false) {
-        this.setState({ cars: ModoStore.car_list });
+        this.setState({ nearby: ModoStore.cars });
         console.log(this.state.cars);
       }
     });
@@ -45,10 +57,23 @@ class App extends Component {
   }
 
   render() {
+    const { currentLocation } = this.state;
     return (
       <div className="App">
         <div> Hey </div>
-        <BasicMap />
+        {(() => {
+          if (currentLocation && currentLocation.lat) {
+            return (
+              <div>
+                <MapWithSearchAndDirections
+                  currentLocation={this.state.currentLocation}
+                />
+                <Directions />
+              </div>
+            );
+          }
+          return <div>Loading...</div>;
+        })()}
       </div>
     );
   }

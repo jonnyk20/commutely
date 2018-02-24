@@ -12,25 +12,28 @@ import {
 } from 'react-google-maps';
 import { SearchBox } from 'react-google-maps/lib/components/places/SearchBox';
 
-const home = { lat: 49.2348813, lng: -123.02525550000001 };
-const saveOn = { lat: 49.23124000000001, lng: -123.00459539999997 };
+let home;
+const testLocation = { lat: 49.23124000000001, lng: -123.00459539999997 };
+const douglas = { lat: 49.2035681, lng: -122.9126894 };
 let destination;
 
 const MapWithASearch = compose(
   withProps({
     googleMapURL: `https://maps.googleapis.com/maps/api/js?key=${window.api_key}&v=3.exp&libraries=geometry,drawing,places`,
     loadingElement: <div style={{ height: `100%` }} />,
-    containerElement: <div style={{ height: `400px` }} />,
+    containerElement: <div style={{ height: `200px` }} />,
     mapElement: <div style={{ height: `100%` }} />
   }),
   lifecycle({
     componentWillMount() {
       const refs = {};
-
+      const { currentLocation } = this.props;
+      if (currentLocation && currentLocation.lat) {
+        this.setState({ markers: [{ position: currentLocation }] });
+      }
       this.setState({
         bounds: null,
-        center: home,
-        markers: [{ position: home }],
+        center: testLocation,
         onMapMounted: ref => {
           refs.map = ref;
         },
@@ -69,20 +72,24 @@ const MapWithASearch = compose(
           // refs.map.fitBounds(bounds);
           // Render Directions
           const DirectionsService = new google.maps.DirectionsService();
-          DirectionsService.route({
-            origin: home,
-            destination: destination.position,
-            travelMode: google.maps.TravelMode.DRIVING,
-          }, (result, status) => {
-            if (status === google.maps.DirectionsStatus.OK) {
-              console.log('directions successfully searched')
-              this.setState({
-                directions: result,
-              });
-            } else {
-              console.error(`error fetching directions ${result}`);
+          DirectionsService.route(
+            {
+              origin: home,
+              destination: destination.position,
+              travelMode: google.maps.TravelMode.TRANSIT
+            },
+            (result, status) => {
+              if (status === google.maps.DirectionsStatus.OK) {
+                console.log('directions successfully searched');
+                console.log('result:', result);
+                this.setState({
+                  directions: result
+                });
+              } else {
+                console.error(`error fetching directions ${result}`);
+              }
             }
-          });
+          );
         }
       });
     }
@@ -91,8 +98,9 @@ const MapWithASearch = compose(
   withGoogleMap
 )(props =>
   <div>
+    {console.log('this props:', props)}
     <GoogleMap
-      center={props.center}
+      center={props.currentLocation}
       defaultZoom={15}
       onBoundsChanged={props.onBoundsChanged}
       ref={props.onMapMounted}>
