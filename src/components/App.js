@@ -1,8 +1,14 @@
+/* global google */
 import React, { Component } from 'react';
 
 import ModoStore from '../Stores/ModoStore';
 import MapWithSearchAndDirections from './Map/MapWithSearchAndDirections';
 import Directions from './Directions/Directions';
+
+
+google.maps.event.addListener(routePath, 'click', function (e) {
+  handelPolyClick(e, this)
+});
 
 class App extends Component {
   state = {
