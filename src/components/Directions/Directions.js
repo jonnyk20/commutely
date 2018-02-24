@@ -6,7 +6,6 @@ class Directions extends Component {
     console.log('directions', this.props.directions)
   }
   render() {
-    console.log('render directions:', this.props.directions)
     return (
       <div className="Directions">
         <div> Directions go Here </div>

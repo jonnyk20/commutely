@@ -16,9 +16,22 @@ class App extends Component {
     available: {}
   };
 
+  selectStep = (stepId) => {
+    console.log('selectStep');
+    console.log('stepId', stepId);
+    const newSteps = this.state.steps.map(step => {
+      step.selected = (step.id === stepId) ? true : false;
+      return step;
+    });
+    this.setState({
+      steps: newSteps
+    })
+  }
+
   setDirections = (directions) => {
     console.log('settind directions in app');
     console.log(directions);
+    let stepId = 1;
     this.setState({
       directions: directions
     });
@@ -26,38 +39,14 @@ class App extends Component {
     var myRoute = directions.routes[0].legs[0];
     const steps = [];
     myRoute.steps.forEach(step => {
+      step.id = stepId;
+      step.selected = false;
       steps.push(step);
+      stepId = stepId + 1;
     });
     this.setState({
       steps: steps
     });
-
-    for (var i = 0; i < myRoute.steps.length; i++) {
-      for (var j = 0; j < myRoute.steps[i].lat_lngs.length; j++) {
-        points.push(myRoute.steps[i].lat_lngs[j]);
-      }
-    }
-
-    this.setState({
-      path: points
-    })
-    console.log('path', points)
-    /// drawRoute
-    // var routLine = new google.maps.Polyline(
-    //   {
-    //     path: points,
-    //     strokeColor: "Red",
-    //     strokeOpacity: 0.5,
-    //     strokeWeight: 10
-    //   }
-    // );
-    // routLine.setMap(map);
-
-    // // Add a listener for the rightclick event on the routLine
-    // google.maps.event.addListener(routLine, 'mouseover', function () {
-    //   alert("moused over straight line!");
-    // });
-    /////////
   }
 
   componentDidMount() {
@@ -117,6 +106,7 @@ class App extends Component {
                   setDirections={this.setDirections}
                   path={this.state.path}
                   steps={this.state.steps}
+                  selectStep={this.selectStep}
                 />
                 <Directions directions={this.state.directions} />
               </div>
