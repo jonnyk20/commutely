@@ -8,6 +8,8 @@
 
 # production
 /build
+# apikey
+/public/secrets.js
 
 # misc
 .DS_Store
