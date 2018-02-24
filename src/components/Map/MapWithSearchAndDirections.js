@@ -11,7 +11,7 @@ import {
 } from 'react-google-maps';
 import { SearchBox } from 'react-google-maps/lib/components/places/SearchBox';
 
-const home = { lat: 49.2348813, lng: -123.02525550000001 };
+let home;
 const saveOn = { lat: 49.23124000000001, lng: -123.00459539999997 };
 
 const MapWithASearch = compose(
@@ -23,12 +23,24 @@ const MapWithASearch = compose(
   }),
   lifecycle({
     componentWillMount() {
+      if (navigator && navigator.geolocation) {
+        console.log('navigator', navigator.geolocation);
+        navigator.geolocation.getCurrentPosition(pos => {
+          const coords = pos.coords;
+          const position = {
+            lat: coords.latitude,
+            lng: coords.longitude
+          };
+          console.log('coords:', coords);
+          console.log(position);
+          home = position;
+        });
+      }
       const refs = {};
-
       this.setState({
         bounds: null,
         center: home,
-        markers: [{ position: home }],
+        markers: [{ position: saveOn }],
         onMapMounted: ref => {
           refs.map = ref;
         },
