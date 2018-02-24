@@ -20,13 +20,13 @@ const MapWithASearch = compose(
   withProps({
     googleMapURL: `https://maps.googleapis.com/maps/api/js?key=${window.api_key}&v=3.exp&libraries=geometry,drawing,places`,
     loadingElement: <div style={{ height: `100%` }} />,
-    containerElement: <div style={{ height: `400px` }} />,
+    containerElement: <div style={{ height: `200px` }} />,
     mapElement: <div style={{ height: `100%` }} />
   }),
   lifecycle({
     componentWillMount() {
       const refs = {};
-
+      console.log('props', this.props)
       this.setState({
         bounds: null,
         center: home,
@@ -72,10 +72,11 @@ const MapWithASearch = compose(
           DirectionsService.route({
             origin: home,
             destination: destination.position,
-            travelMode: google.maps.TravelMode.DRIVING,
+            travelMode: google.maps.TravelMode.TRANSIT,
           }, (result, status) => {
             if (status === google.maps.DirectionsStatus.OK) {
-              console.log('directions successfully searched')
+              console.log('directions successfully searched');
+              console.log('result:', result)
               this.setState({
                 directions: result,
               });
