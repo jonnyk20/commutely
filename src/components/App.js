@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import BasicMap from './Map/BasicMap';
+import MapWithSearchAndDirections from './Map/MapWithSearchAndDirections';
 
 class App extends Component {
   render() {
     return (
       <div className="App">
         <div> Hey </div>
-        <BasicMap />
+        <MapWithSearchAndDirections />
       </div>
     );
   }
