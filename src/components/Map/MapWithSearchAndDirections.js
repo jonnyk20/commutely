@@ -25,23 +25,10 @@ const MapWithASearch = compose(
   }),
   lifecycle({
     componentWillMount() {
-      if (navigator && navigator.geolocation) {
-        console.log('navigator', navigator.geolocation);
-        navigator.geolocation.getCurrentPosition(pos => {
-          const coords = pos.coords;
-          const position = {
-            lat: coords.latitude,
-            lng: coords.longitude
-          };
-          console.log('coords:', coords);
-          console.log(position);
-          home = position;
-        });
-      }
       const refs = {};
       this.setState({
         bounds: null,
-        center: home,
+        center: saveOn,
         markers: [{ position: saveOn }],
         onMapMounted: ref => {
           refs.map = ref;
@@ -81,20 +68,23 @@ const MapWithASearch = compose(
           // refs.map.fitBounds(bounds);
           // Render Directions
           const DirectionsService = new google.maps.DirectionsService();
-          DirectionsService.route({
-            origin: home,
-            destination: destination.position,
-            travelMode: google.maps.TravelMode.DRIVING,
-          }, (result, status) => {
-            if (status === google.maps.DirectionsStatus.OK) {
-              console.log('directions successfully searched')
-              this.setState({
-                directions: result,
-              });
-            } else {
-              console.error(`error fetching directions ${result}`);
+          DirectionsService.route(
+            {
+              origin: home,
+              destination: destination.position,
+              travelMode: google.maps.TravelMode.DRIVING
+            },
+            (result, status) => {
+              if (status === google.maps.DirectionsStatus.OK) {
+                console.log('directions successfully searched');
+                this.setState({
+                  directions: result
+                });
+              } else {
+                console.error(`error fetching directions ${result}`);
+              }
             }
-          });
+          );
         }
       });
     }
@@ -104,7 +94,7 @@ const MapWithASearch = compose(
 )(props =>
   <div>
     <GoogleMap
-      center={props.center}
+      center={props.currentLocation}
       defaultZoom={15}
       onBoundsChanged={props.onBoundsChanged}
       ref={props.onMapMounted}>
