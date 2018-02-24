@@ -4,9 +4,9 @@ import BasicMap from './Map/BasicMap';
 import MapWithSearchAndDirections from './Map/MapWithSearchAndDirections';
 
 class App extends Component {
-  loadModoLocation = () => {
+  loadModoLocation() {
     return new Promise(resolve => {
-      FetchResource.modoApi('car_list')
+      FetchResource.callModo('car_list')
         .then(res => {
           console.log(res);
           resolve(res);
@@ -15,13 +15,13 @@ class App extends Component {
           console.log(err);
         });
     });
-  };
+  }
 
   render() {
+    const modo = this.loadModoLocation();
     return (
       <div className="App">
         <div> Hey </div>
-        <h2>{this.loadModoLocation()}</h2>
         <BasicMap />
         <MapWithSearchAndDirections />
       </div>
