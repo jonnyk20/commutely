@@ -1,29 +1,29 @@
 import React, { Component } from 'react';
-// import FetchResource from '../Resources/FetchResource';
+import FetchResource from '../Resources/FetchResource';
 import BasicMap from './Map/BasicMap';
 import MapWithSearch from './Map/MapWithSearch';
 import MapWithDirectionsRenderer from './Map/MapWithDirectionsRenderer';
 
 class App extends Component {
-  // loadModoLocation = () => {
-  //   return new Promise(resolve => {
-  //     FetchResource.modoApi('car_list')
-  //       .then(res => {
-  //         console.log(res);
-  //         resolve(res);
-  //       })
-  //       .catch(err => {
-  //         console.log(err);
-  //       });
-  //   });
-  // };
+  loadModoLocation() {
+    FetchResource.callModo('car_list')
+      .then(res => {
+        console.log(res);
+        return res;
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
 
   render() {
+    const modo = this.loadModoLocation();
+    console.log(modo);
     return (
       <div className="App">
         <div> Hey </div>
-        <MapWithDirectionsRenderer />
-        {/* <h2>{this.loadModoLocation()}</h2> */}
+        <BasicMap />
+        <MapWithSearchAndDirections />
       </div>
     );
   }
