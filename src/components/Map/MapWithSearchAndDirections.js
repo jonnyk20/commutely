@@ -21,22 +21,20 @@ const MapWithASearch = compose(
   withProps({
     googleMapURL: `https://maps.googleapis.com/maps/api/js?key=${window.api_key}&v=3.exp&libraries=geometry,drawing,places`,
     loadingElement: <div style={{ height: `100%` }} />,
-    containerElement: <div style={{ height: `200px` }} />,
+    containerElement: <div style={{ height: `300px` }} />,
     mapElement: <div style={{ height: `100%` }} />
   }),
   lifecycle({
     componentWillMount() {
       const refs = {};
       const { currentLocation } = this.props;
-      console.log('here');
       if (currentLocation && currentLocation.lat) {
-        console.log('HERE')
         console.log(currentLocation)
         this.setState({ marker: [{ position: douglas }] });
       }
       this.setState({
         bounds: null,
-        center: testLocation,
+        center: douglas,
         markers: [{ position: douglas }],
         onMapMounted: ref => {
           refs.map = ref;
@@ -78,17 +76,16 @@ const MapWithASearch = compose(
           const DirectionsService = new google.maps.DirectionsService();
           DirectionsService.route(
             {
-              origin: home,
+              origin: douglas,
               destination: destination.position,
               travelMode: google.maps.TravelMode.TRANSIT
             },
             (result, status) => {
               if (status === google.maps.DirectionsStatus.OK) {
-                console.log('directions successfully searched');
-                console.log('result:', result);
                 this.setState({
                   directions: result
                 });
+                this.props.setDirections(result);
               } else {
                 console.error(`error fetching directions ${result}`);
               }
