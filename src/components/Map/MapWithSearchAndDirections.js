@@ -13,7 +13,8 @@ import {
 import { SearchBox } from 'react-google-maps/lib/components/places/SearchBox';
 
 let home;
-const saveOn = { lat: 49.23124000000001, lng: -123.00459539999997 };
+const testLocation = { lat: 49.23124000000001, lng: -123.00459539999997 };
+const douglas = { lat: 49.2035681, lng: -122.9126894 };
 let destination;
 
 const MapWithASearch = compose(
@@ -29,12 +30,14 @@ const MapWithASearch = compose(
       const { currentLocation } = this.props;
       console.log('here');
       if (currentLocation && currentLocation.lat) {
-        this.setState({ marker: [{ position: currentLocation }] });
+        console.log('HERE')
+        console.log(currentLocation)
+        this.setState({ marker: [{ position: douglas }] });
       }
       this.setState({
         bounds: null,
-        center: saveOn,
-        markers: [{ position: saveOn }],
+        center: testLocation,
+        markers: [{ position: douglas }],
         onMapMounted: ref => {
           refs.map = ref;
         },
