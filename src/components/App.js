@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import ModoStore from '../Stores/ModoStore';
 import BasicMap from './Map/BasicMap';
-import MapWithSearchAndDirections from './Map/MapWithSearchAndDirections';
-import MapWithDirectionsRenderer from './Map/MapWithDirectionsRenderer';
 
 class App extends Component {
   render() {
@@ -13,7 +11,6 @@ class App extends Component {
       <div className="App">
         <div> Hey </div>
         <BasicMap />
-        <MapWithSearchAndDirections />
       </div>
     );
   }
