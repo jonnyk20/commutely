@@ -7,12 +7,14 @@ import {
   withScriptjs,
   withGoogleMap,
   GoogleMap,
-  Marker
+  Marker,
+  DirectionsRenderer
 } from 'react-google-maps';
 import { SearchBox } from 'react-google-maps/lib/components/places/SearchBox';
 
 const home = { lat: 49.2348813, lng: -123.02525550000001 };
 const saveOn = { lat: 49.23124000000001, lng: -123.00459539999997 };
+let destination;
 
 const MapWithASearch = compose(
   withProps({
@@ -50,7 +52,6 @@ const MapWithASearch = compose(
               bounds.extend(place.geometry.location);
             }
           });
-          console.log('bounds: ', bounds);
           const nextMarkers = places.map(place => ({
             position: place.geometry.location
           }));
@@ -59,12 +60,29 @@ const MapWithASearch = compose(
             '0.position',
             this.state.center
           );
-
+          destination = nextMarkers[0];
+          console.log('destination', destination);
           this.setState({
             center: nextCenter,
             markers: [this.state.markers[0], nextMarkers[0]]
           });
           // refs.map.fitBounds(bounds);
+          // Render Directions
+          const DirectionsService = new google.maps.DirectionsService();
+          DirectionsService.route({
+            origin: home,
+            destination: destination.position,
+            travelMode: google.maps.TravelMode.DRIVING,
+          }, (result, status) => {
+            if (status === google.maps.DirectionsStatus.OK) {
+              console.log('directions successfully searched')
+              this.setState({
+                directions: result,
+              });
+            } else {
+              console.error(`error fetching directions ${result}`);
+            }
+          });
         }
       });
     }
@@ -104,6 +122,7 @@ const MapWithASearch = compose(
       {props.markers.map((marker, index) =>
         <Marker key={index} position={marker.position} />
       )}
+      {props.directions && <DirectionsRenderer directions={props.directions} />}
     </GoogleMap>
   </div>
 );
