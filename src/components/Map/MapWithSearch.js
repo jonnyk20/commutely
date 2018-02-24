@@ -43,9 +43,6 @@ const MapWithASearch = compose(
         onPlacesChanged: () => {
           const places = refs.searchBox.getPlaces();
           const bounds = new google.maps.LatLngBounds();
-          //console.log('places', places[0].geometry.location.lat(), places[0].geometry.location.lng());
-          console.log('places:', places);
-
           places.forEach(place => {
             if (place.geometry.viewport) {
               bounds.union(place.geometry.viewport);
