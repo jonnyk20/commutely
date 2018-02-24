@@ -6,7 +6,7 @@ import {
   GoogleMap,
   Marker
 } from 'react-google-maps';
-
+console.log('api key', window.api_key)
 const BasicMap = compose(
   withProps({
     googleMapURL: `https://maps.googleapis.com/maps/api/js?key=${window.api_key}`,
