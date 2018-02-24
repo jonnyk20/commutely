@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import FetchResource from '../Resources/FetchResource';
 import BasicMap from './Map/BasicMap';
+import MapWithSearchAndDirections from './Map/MapWithSearchAndDirections';
 
 class App extends Component {
   loadModoLocation = () => {
@@ -22,6 +23,7 @@ class App extends Component {
         <div> Hey </div>
         <h2>{this.loadModoLocation()}</h2>
         <BasicMap />
+        <MapWithSearchAndDirections />
       </div>
     );
   }
