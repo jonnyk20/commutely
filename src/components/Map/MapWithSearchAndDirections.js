@@ -28,16 +28,12 @@ const MapWithASearch = compose(
     componentWillMount() {
       const refs = {};
       const { currentLocation } = this.props;
-      console.log('here');
       if (currentLocation && currentLocation.lat) {
-        console.log('HERE')
-        console.log(currentLocation)
-        this.setState({ marker: [{ position: douglas }] });
+        this.setState({ markers: [{ position: currentLocation }] });
       }
       this.setState({
         bounds: null,
         center: testLocation,
-        markers: [{ position: douglas }],
         onMapMounted: ref => {
           refs.map = ref;
         },
@@ -102,6 +98,7 @@ const MapWithASearch = compose(
   withGoogleMap
 )(props =>
   <div>
+    {console.log('this props:', props)}
     <GoogleMap
       center={props.currentLocation}
       defaultZoom={15}

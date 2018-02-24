@@ -6,7 +6,8 @@ import Directions from './Directions/Directions';
 
 class App extends Component {
   state = {
-    currentLocation: { lat: 49.2035681, lng: -122.9126894 }
+    // currentLocation: { lat: 49.2035681, lng: -122.9126894 },
+    currentLocation: { lat: '', lng: '' }
   };
 
   componentDidMount() {
@@ -26,13 +27,23 @@ class App extends Component {
     ModoStore.getCarList().then(() => {
       console.log(ModoStore.car_list);
     });
+    const { currentLocation } = this.state;
     return (
       <div className="App">
         <div> Hey </div>
-        <MapWithSearchAndDirections
-          currentLocation={this.state.currentLocation}
-        />
-        <Directions />
+        {(() => {
+          if (currentLocation && currentLocation.lat) {
+            return (
+              <div>
+                <MapWithSearchAndDirections
+                  currentLocation={this.state.currentLocation}
+                />
+                <Directions />
+              </div>
+            );
+          }
+          return <div>Loading...</div>;
+        })()}
       </div>
     );
   }
