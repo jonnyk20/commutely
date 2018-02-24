@@ -1,24 +1,14 @@
 import React, { Component } from 'react';
-import FetchResource from '../Resources/FetchResource';
+import ModoStore from '../Stores/ModoStore';
 import BasicMap from './Map/BasicMap';
 import MapWithSearchAndDirections from './Map/MapWithSearchAndDirections';
 import MapWithDirectionsRenderer from './Map/MapWithDirectionsRenderer';
 
 class App extends Component {
-  loadModoLocation() {
-    FetchResource.callModo('car_list')
-      .then(res => {
-        console.log(res);
-        return res;
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  }
-
   render() {
-    const modo = this.loadModoLocation();
-    console.log(modo);
+    ModoStore.getCarList().then(() => {
+      console.log(ModoStore.car_list);
+    });
     return (
       <div className="App">
         <div> Hey </div>
