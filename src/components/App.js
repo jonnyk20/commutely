@@ -1,3 +1,4 @@
+/* global google */
 import React, { Component } from 'react';
 
 import ModoStore from '../Stores/ModoStore';
@@ -15,6 +16,35 @@ class App extends Component {
     available: {}
   };
 
+  selectStep = stepId => {
+    const newSteps = this.state.steps.map(step => {
+      step.selected = step.id === stepId ? true : false;
+      return step;
+    });
+    this.setState({
+      steps: newSteps
+    });
+  };
+
+  setDirections = directions => {
+    console.log(directions);
+    let stepId = 1;
+    this.setState({
+      directions: directions
+    });
+    var points = [];
+    var myRoute = directions.routes[0].legs[0];
+    const steps = [];
+    myRoute.steps.forEach(step => {
+      step.id = stepId;
+      step.selected = false;
+      steps.push(step);
+      stepId = stepId + 1;
+    });
+    this.setState({
+      steps: steps
+    });
+  };
   componentDidMount() {
     if (navigator && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(pos => {
@@ -41,7 +71,6 @@ class App extends Component {
     ModoStore.getNearby(this.state.lat, this.state.lng).then(() => {
       if (ModoStore.isLoading === false) {
         this.setState({ nearby: ModoStore.nearby });
-        //console.log(this.state.nearby);
       }
     });
   }
@@ -76,6 +105,9 @@ class App extends Component {
                 <MapWithSearchAndDirections
                   currentLocation={this.state.currentLocation}
                   setDirections={this.setDirections}
+                  path={this.state.path}
+                  steps={this.state.steps}
+                  selectStep={this.selectStep}
                 />
                 {directions &&
                   directions.routes &&

@@ -8,12 +8,12 @@ import {
   withGoogleMap,
   GoogleMap,
   Marker,
-  DirectionsRenderer
+  DirectionsRenderer,
+  Polyline
 } from 'react-google-maps';
 import { SearchBox } from 'react-google-maps/lib/components/places/SearchBox';
 
 let home;
-const testLocation = { lat: 49.23124000000001, lng: -123.00459539999997 };
 const douglas = { lat: 49.2035681, lng: -122.9126894 };
 let destination;
 
@@ -46,6 +46,7 @@ const MapWithASearch = compose(
           refs.searchBox = ref;
         },
         onPlacesChanged: () => {
+          console.log('onPlacesChanged');
           const places = refs.searchBox.getPlaces();
           const bounds = new google.maps.LatLngBounds();
           places.forEach(place => {
@@ -55,6 +56,7 @@ const MapWithASearch = compose(
               bounds.extend(place.geometry.location);
             }
           });
+          bounds.extend(currentLocation);
           const nextMarkers = places.map(place => ({
             position: place.geometry.location
           }));
@@ -64,12 +66,12 @@ const MapWithASearch = compose(
             this.state.center
           );
           destination = nextMarkers[0];
-          // console.log('destination', destination);
+
           this.setState({
             center: nextCenter,
             markers: [this.state.markers[0], nextMarkers[0]]
           });
-          // refs.map.fitBounds(bounds);
+          refs.map.fitBounds(bounds);
           // Render Directions
           const DirectionsService = new google.maps.DirectionsService();
           DirectionsService.route(
@@ -80,9 +82,9 @@ const MapWithASearch = compose(
             },
             (result, status) => {
               if (status === google.maps.DirectionsStatus.OK) {
-                this.setState({
-                  directions: result
-                });
+                // this.setState({
+                //   directions: result
+                // });
                 this.props.setDirections(result);
               } else {
                 console.error(`error fetching directions ${result}`);
@@ -129,6 +131,22 @@ const MapWithASearch = compose(
         <Marker key={index} position={marker.position} />
       )}
       {props.directions && <DirectionsRenderer directions={props.directions} />}
+      {props.steps &&
+        props.steps.map(step => {
+          return (
+            <Polyline
+              key={step.polyline.points}
+              path={step.lat_lngs}
+              options={{
+                strokeColor: step.selected ? 'red' : 'blue',
+                strokeWeight: 5
+              }}
+              onClick={() => {
+                props.selectStep(step.id);
+              }}
+            />
+          );
+        })}
     </GoogleMap>
   </div>
 );
