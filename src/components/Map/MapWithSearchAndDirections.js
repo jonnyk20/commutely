@@ -20,7 +20,7 @@ const MapWithASearch = compose(
   withProps({
     googleMapURL: `https://maps.googleapis.com/maps/api/js?key=${window.api_key}&v=3.exp&libraries=geometry,drawing,places`,
     loadingElement: <div style={{ height: `100%` }} />,
-    containerElement: <div style={{ height: `400px` }} />,
+    containerElement: <div style={{ height: `200px` }} />,
     mapElement: <div style={{ height: `100%` }} />
   }),
   lifecycle({
@@ -68,21 +68,19 @@ const MapWithASearch = compose(
           // refs.map.fitBounds(bounds);
           // Render Directions
           const DirectionsService = new google.maps.DirectionsService();
-          DirectionsService.route(
-            {
-              origin: home,
-              destination: destination.position,
-              travelMode: google.maps.TravelMode.DRIVING
-            },
-            (result, status) => {
-              if (status === google.maps.DirectionsStatus.OK) {
-                console.log('directions successfully searched');
-                this.setState({
-                  directions: result
-                });
-              } else {
-                console.error(`error fetching directions ${result}`);
-              }
+          DirectionsService.route({
+            origin: home,
+            destination: destination.position,
+            travelMode: google.maps.TravelMode.TRANSIT,
+          }, (result, status) => {
+            if (status === google.maps.DirectionsStatus.OK) {
+              console.log('directions successfully searched');
+              console.log('result:', result)
+              this.setState({
+                directions: result,
+              });
+            } else {
+              console.error(`error fetching directions ${result}`);
             }
           );
         }

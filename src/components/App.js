@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
+
 import ModoStore from '../Stores/ModoStore';
-import BasicMap from './Map/BasicMap';
 import MapWithSearchAndDirections from './Map/MapWithSearchAndDirections';
+import Directions from './Directions/Directions';
 
 class App extends Component {
   state = {
@@ -31,6 +32,7 @@ class App extends Component {
         <MapWithSearchAndDirections
           currentLocation={this.state.currentLocation}
         />
+        <Directions />
       </div>
     );
   }
