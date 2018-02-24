@@ -68,19 +68,22 @@ const MapWithASearch = compose(
           // refs.map.fitBounds(bounds);
           // Render Directions
           const DirectionsService = new google.maps.DirectionsService();
-          DirectionsService.route({
-            origin: home,
-            destination: destination.position,
-            travelMode: google.maps.TravelMode.TRANSIT,
-          }, (result, status) => {
-            if (status === google.maps.DirectionsStatus.OK) {
-              console.log('directions successfully searched');
-              console.log('result:', result)
-              this.setState({
-                directions: result,
-              });
-            } else {
-              console.error(`error fetching directions ${result}`);
+          DirectionsService.route(
+            {
+              origin: home,
+              destination: destination.position,
+              travelMode: google.maps.TravelMode.TRANSIT
+            },
+            (result, status) => {
+              if (status === google.maps.DirectionsStatus.OK) {
+                console.log('directions successfully searched');
+                console.log('result:', result);
+                this.setState({
+                  directions: result
+                });
+              } else {
+                console.error(`error fetching directions ${result}`);
+              }
             }
           );
         }
