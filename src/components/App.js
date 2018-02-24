@@ -5,11 +5,6 @@ import ModoStore from '../Stores/ModoStore';
 import MapWithSearchAndDirections from './Map/MapWithSearchAndDirections';
 import Directions from './Directions/Directions';
 
-
-google.maps.event.addListener(routePath, 'click', function (e) {
-  handelPolyClick(e, this)
-});
-
 class App extends Component {
   state = {
     currentLocation: {},
@@ -27,6 +22,42 @@ class App extends Component {
     this.setState({
       directions: directions
     });
+    var points = [];
+    var myRoute = directions.routes[0].legs[0];
+    const steps = [];
+    myRoute.steps.forEach(step => {
+      steps.push(step);
+    });
+    this.setState({
+      steps: steps
+    });
+
+    for (var i = 0; i < myRoute.steps.length; i++) {
+      for (var j = 0; j < myRoute.steps[i].lat_lngs.length; j++) {
+        points.push(myRoute.steps[i].lat_lngs[j]);
+      }
+    }
+
+    this.setState({
+      path: points
+    })
+    console.log('path', points)
+    /// drawRoute
+    // var routLine = new google.maps.Polyline(
+    //   {
+    //     path: points,
+    //     strokeColor: "Red",
+    //     strokeOpacity: 0.5,
+    //     strokeWeight: 10
+    //   }
+    // );
+    // routLine.setMap(map);
+
+    // // Add a listener for the rightclick event on the routLine
+    // google.maps.event.addListener(routLine, 'mouseover', function () {
+    //   alert("moused over straight line!");
+    // });
+    /////////
   }
 
   componentDidMount() {
@@ -84,6 +115,8 @@ class App extends Component {
                 <MapWithSearchAndDirections
                   currentLocation={this.state.currentLocation}
                   setDirections={this.setDirections}
+                  path={this.state.path}
+                  steps={this.state.steps}
                 />
                 <Directions directions={this.state.directions} />
               </div>

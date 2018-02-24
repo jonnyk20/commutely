@@ -8,7 +8,8 @@ import {
   withGoogleMap,
   GoogleMap,
   Marker,
-  DirectionsRenderer
+  DirectionsRenderer,
+  Polyline
 } from 'react-google-maps';
 import { SearchBox } from 'react-google-maps/lib/components/places/SearchBox';
 
@@ -80,9 +81,9 @@ const MapWithASearch = compose(
             },
             (result, status) => {
               if (status === google.maps.DirectionsStatus.OK) {
-                this.setState({
-                  directions: result
-                });
+                // this.setState({
+                //   directions: result
+                // });
                 this.props.setDirections(result);
               } else {
                 console.error(`error fetching directions ${result}`);
@@ -130,6 +131,10 @@ const MapWithASearch = compose(
         <Marker key={index} position={marker.position} />
       )}
       {props.directions && <DirectionsRenderer directions={props.directions} />}
+      {/* {props.path && <Polyline path={props.path} options={{ strokeColor: "red" }} />} */}
+      {props.steps && props.steps.map(step => {
+        return <Polyline key={step.polyline.points} path={step.lat_lngs} options={{ strokeColor: "red" }} onClick={() => { console.log('clicked on step', step) }} />
+      })}
     </GoogleMap>
   </div>
 );
