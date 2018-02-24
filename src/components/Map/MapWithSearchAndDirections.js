@@ -26,6 +26,11 @@ const MapWithASearch = compose(
   lifecycle({
     componentWillMount() {
       const refs = {};
+      const { currentLocation } = this.props;
+      console.log('here');
+      if (currentLocation && currentLocation.lat) {
+        this.setState({ marker: [{ position: currentLocation }] });
+      }
       this.setState({
         bounds: null,
         center: saveOn,

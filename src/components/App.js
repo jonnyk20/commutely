@@ -6,7 +6,7 @@ import Directions from './Directions/Directions';
 
 class App extends Component {
   state = {
-    currentLocation: { lat: '', lng: '' }
+    currentLocation: { lat: 49.2035681, lng: -122.9126894 }
   };
 
   componentDidMount() {
