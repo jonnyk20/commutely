@@ -18,7 +18,6 @@ class App extends Component {
 
   render() {
     const modo = this.loadModoLocation();
-    console.log(modo);
     return (
       <div className="App">
         <div> Hey </div>
