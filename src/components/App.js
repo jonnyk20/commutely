@@ -17,8 +17,6 @@ class App extends Component {
   };
 
   selectStep = (stepId) => {
-    console.log('selectStep');
-    console.log('stepId', stepId);
     const newSteps = this.state.steps.map(step => {
       step.selected = (step.id === stepId) ? true : false;
       return step;
@@ -29,7 +27,6 @@ class App extends Component {
   }
 
   setDirections = (directions) => {
-    console.log('settind directions in app');
     console.log(directions);
     let stepId = 1;
     this.setState({
@@ -69,7 +66,6 @@ class App extends Component {
     ModoStore.getNearby(this.state.lat, this.state.lng).then(() => {
       if (ModoStore.isLoading === false) {
         this.setState({ nearby: ModoStore.nearby });
-        console.log(this.state.nearby);
       }
     });
   }

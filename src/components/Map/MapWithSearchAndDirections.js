@@ -14,7 +14,6 @@ import {
 import { SearchBox } from 'react-google-maps/lib/components/places/SearchBox';
 
 let home;
-const testLocation = { lat: 49.23124000000001, lng: -123.00459539999997 };
 const douglas = { lat: 49.2035681, lng: -122.9126894 };
 let destination;
 
@@ -47,6 +46,7 @@ const MapWithASearch = compose(
           refs.searchBox = ref;
         },
         onPlacesChanged: () => {
+          console.log('onPlacesChanged')
           const places = refs.searchBox.getPlaces();
           const bounds = new google.maps.LatLngBounds();
           places.forEach(place => {
@@ -56,6 +56,7 @@ const MapWithASearch = compose(
               bounds.extend(place.geometry.location);
             }
           });
+          bounds.extend(currentLocation);
           const nextMarkers = places.map(place => ({
             position: place.geometry.location
           }));
@@ -97,7 +98,6 @@ const MapWithASearch = compose(
   withGoogleMap
 )(props =>
   <div>
-    {console.log('this props:', props)}
     <GoogleMap
       center={props.currentLocation}
       defaultZoom={15}
