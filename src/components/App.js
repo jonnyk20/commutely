@@ -8,20 +8,19 @@ class App extends Component {
   state = {
     currentLocation: {},
     directions: {},
-    lat: 49.201,
-    lng: -122.91,
     cars: {},
     nearby: {},
+    locations: {},
     available: {}
   };
 
-  setDirections = (directions) => {
+  setDirections = directions => {
     console.log('settind directions in app');
     console.log(directions);
     this.setState({
       directions: directions
     });
-  }
+  };
 
   componentDidMount() {
     if (navigator && navigator.geolocation) {
@@ -32,39 +31,32 @@ class App extends Component {
           lng: coords.longitude
         };
         this.setState({ currentLocation: position });
+        this.handleLoadNearby();
       });
     }
-    this.handleLoadNearby();
-    // this.handleLoadCars();
-    // this.handleLoadAvailability();
   }
 
-  handleLoadNearby(lat = null, lng = null) {
-    ModoStore.getNearby(this.state.lat, this.state.lng).then(() => {
+  handleLoadNearby() {
+    ModoStore.getNearby(
+      this.state.currentLocation.lat,
+      this.state.currentLocation.lng
+    ).then(() => {
       if (ModoStore.isLoading === false) {
         this.setState({ nearby: ModoStore.nearby });
-        console.log(this.state.nearby);
+        ModoStore.findCarsFromLocation();
+        console.log('Cars:', ModoStore.nearbyCars);
       }
     });
   }
 
-  handleLoadCars() {
-    ModoStore.getCars().then(() => {
-      if (ModoStore.isLoading === false) {
-        this.setState({ nearby: ModoStore.cars });
-        console.log(this.state.cars);
-      }
-    });
-  }
-
-  handleLoadAvailability() {
-    ModoStore.getAvailability().then(() => {
-      if (ModoStore.isLoading === false) {
-        this.setState({ available: ModoStore.availability });
-        console.log(this.state.availability);
-      }
-    });
-  }
+  // handleLoadLocations() {
+  //   ModoStore.getLocations().then(() => {
+  //     if (ModoStore.isLoading === false) {
+  //       this.setState({ locations: ModoStore.locations });
+  //       console.log('Locations:', ModoStore.locations);
+  //     }
+  //   });
+  // }
 
   render() {
     const { currentLocation } = this.state;
@@ -85,7 +77,7 @@ class App extends Component {
           }
           return <div>Loading...</div>;
         })()}
-      </div >
+      </div>
     );
   }
 }

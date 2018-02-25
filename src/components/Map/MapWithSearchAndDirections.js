@@ -19,7 +19,9 @@ let destination;
 
 const MapWithASearch = compose(
   withProps({
-    googleMapURL: `https://maps.googleapis.com/maps/api/js?key=${window.api_key}&v=3.exp&libraries=geometry,drawing,places`,
+    googleMapURL: `https://maps.googleapis.com/maps/api/js?key=${
+      window.api_key
+    }&v=3.exp&libraries=geometry,drawing,places`,
     loadingElement: <div style={{ height: `100%` }} />,
     containerElement: <div style={{ height: `300px` }} />,
     mapElement: <div style={{ height: `100%` }} />
@@ -95,9 +97,8 @@ const MapWithASearch = compose(
   }),
   withScriptjs,
   withGoogleMap
-)(props =>
+)(props => (
   <div>
-    {console.log('this props:', props)}
     <GoogleMap
       center={props.currentLocation}
       defaultZoom={15}
@@ -126,12 +127,12 @@ const MapWithASearch = compose(
           type="text"
         />
       </SearchBox>
-      {props.markers.map((marker, index) =>
+      {props.markers.map((marker, index) => (
         <Marker key={index} position={marker.position} />
-      )}
+      ))}
       {props.directions && <DirectionsRenderer directions={props.directions} />}
     </GoogleMap>
   </div>
-);
+));
 
 export default MapWithASearch;
