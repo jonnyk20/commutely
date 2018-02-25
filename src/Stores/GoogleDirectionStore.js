@@ -15,7 +15,6 @@ class GoogleDirectionStore {
           travelMode: google.maps.TravelMode[this.mode]
         },
         (result, status) => {
-          console.log(this.mode);
           if (status === google.maps.DirectionsStatus.OK) {
             resolve(result);
           } else {

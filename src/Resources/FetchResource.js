@@ -5,6 +5,8 @@ export default class FetchResource {
         .then(response => {
           response.json().then(data => {
             if (data.Status === 'Success') {
+              console.log('SUCCESS')
+              console.log(data)
               resolve(data);
             }
           });

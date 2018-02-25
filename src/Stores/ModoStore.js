@@ -13,7 +13,7 @@ class ModoStore {
         .then(res => {
           this.nearby = res.Response;
           this.isLoading = false;
-          resolve();
+          resolve(res);
         })
         .catch(err => {
           console.log(err);
