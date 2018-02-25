@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import moment from 'moment';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import Popover from 'material-ui/Popover';
 import { styles, palette } from '../styles/Theme';
 import ModoStore from '../Stores/ModoStore';
 import GoogleDirectionStore from '../Stores/GoogleDirectionStore';
@@ -10,7 +11,6 @@ import MapWithSearchAndDirections from './Map/MapWithSearchAndDirections';
 import Directions from './Directions/Directions';
 import SelectedStep from './Directions/SelectedStep';
 import ModoButton from './ModoButton';
-import ModoPopup from './ModoPopup';
 import NotificationResource from '../Resources/NotificationsResource';
 
 const muiTheme = getMuiTheme({
@@ -27,7 +27,21 @@ class App extends Component {
     directions: {},
     cars: [],
     modoPopup: false,
-    selectedCar: {}
+    selectedCar: {},
+    target: {}
+  };
+  setRefs = ref => {
+    console.log('setting Refs');
+    console.log('refs', ref);
+    this.setState({
+      refs: { map: ref }
+    });
+  };
+
+  setDestination = destination => {
+    this.setState({
+      destination: destination
+    });
   };
 
   componentDidMount() {
@@ -39,16 +53,6 @@ class App extends Component {
           lng: coords.longitude
         };
         this.setState({ currentLocation: position });
-
-        ModoStore.getNearby(
-          this.state.currentLocation.lat,
-          this.state.currentLocation.lng
-        ).then(() => {
-          ModoStore.findCarsFromLocation().then(() => {
-            this.setState({ cars: ModoStore.blankArray });
-            console.log(this.state.cars);
-          });
-        });
       });
     }
     // experimental firebase stuff
@@ -136,16 +140,61 @@ class App extends Component {
   };
 
   searchNewDirections = (step, mode) => {
+    GoogleDirectionStore.mode = mode;
+    const bounds = new google.maps.LatLngBounds();
+    if (!step) {
+      GoogleDirectionStore.getDirections(
+        this.state.currentLocation,
+        this.state.destination
+      )
+        .then(res => {
+          this.setDirections(res);
+
+          res.routes[0].legs[0].steps.forEach(step => {
+            bounds.extend(step.start_location);
+          });
+          this.state.refs.map.fitBounds(bounds);
+
+          if (mode === 'DRIVING') {
+            this.setState({ cars: [] });
+            if (this.state.currentLocation) {
+              this.findCarLocation(
+                this.state.currentLocation.lat,
+                this.state.currentLocation.lng
+              );
+            }
+          }
+        })
+        .catch(err => {
+          console.err(`err fetching directions ${err}`);
+          this.state.refs.map.fitBounds(bounds);
+        });
+      return;
+    }
+
     const origin = step.start_location;
     const destination = step.end_location;
-    GoogleDirectionStore.mode = mode;
     GoogleDirectionStore.getDirections(origin, destination).then(res => {
       this.replaceDirections(step, res.routes[0].legs[0].steps, res.routes[0]);
     });
+    if (mode === 'DRIVING') {
+      this.setState({ cars: [] });
+      if (origin) {
+        this.findCarLocation(origin.lat(), origin.lng());
+      }
+    }
   };
 
-  selectModo = car => {
-    this.setState({ modoPopup: true, selectedCar: car });
+  findCarLocation = (lat, lng) => {
+    ModoStore.getNearby(lat, lng).then(() => {
+      ModoStore.findCarsFromLocation().then(() => {
+        this.setState({ cars: ModoStore.blankArray });
+      });
+    });
+  };
+
+  selectModo = (e, car) => {
+    this.setState({ modoPopup: true, selectedCar: car, target: e });
   };
 
   render() {
@@ -153,7 +202,6 @@ class App extends Component {
     return (
       <MuiThemeProvider muiTheme={muiTheme}>
         <div className="App">
-          <div> Hey </div>
           {(() => {
             if (currentLocation && currentLocation.lat) {
               return (
@@ -166,21 +214,52 @@ class App extends Component {
                     selectStep={this.selectStep}
                     cars={this.state.cars}
                     selectModo={this.selectModo}
+                    setDestination={this.setDestination}
+                    setRefs={this.setRefs}
                   />
                   {directions &&
-                    directions.routes &&
-                    <Directions
-                      selectStep={this.selectStep}
-                      directions={this.state.directions}
-                      steps={this.state.steps}
-                    />}
-                  {this.state.steps &&
+                    directions.routes && (
+                      <Directions
+                        selectStep={this.selectStep}
+                        directions={this.state.directions}
+                        steps={this.state.steps}
+                      />
+                    )}
+                  {this.state.steps && (
                     <SelectedStep
                       step={this.state.steps.find(step => step.selected)}
                       searchNewDirections={this.searchNewDirections}
-                    />}
-                  {this.state.modoPopup &&
-                    <ModoPopup selectedCar={this.state.selectedCar} />}
+                    />
+                  )}
+                  {this.state.modoPopup && (
+                    <Popover
+                      open={this.state.modoPopup}
+                      anchorEl={this.state.target}
+                      style={{ padding: '10px 8px 8px 8px' }}
+                      anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
+                      targetOrigin={{ horizontal: 'left', vertical: 'top' }}
+                      onRequestClose={() => {
+                        this.setState({
+                          modoPopup: false,
+                          selecedCar: {},
+                          target: {}
+                        });
+                      }}>
+                      <div>
+                        <b>Type: </b>
+                        {this.state.selectedCar.category}
+                      </div>
+                      <div>
+                        <b>Model: </b>
+                        {this.state.selectedCar.model}
+                      </div>
+                      <div>
+                        <b>Seats: </b>
+                        {this.state.selectedCar.seats}
+                      </div>
+                      <ModoButton selectedCar={this.state.selecedCar} />
+                    </Popover>
+                  )}
                 </div>
               );
             }

@@ -40,6 +40,7 @@ const MapWithASearch = compose(
         center: currentLocation,
         onMapMounted: ref => {
           refs.map = ref;
+          this.props.setRefs(ref);
         },
         onBoundsChanged: () => {
           this.setState({
@@ -74,6 +75,7 @@ const MapWithASearch = compose(
           });
           // refs.map.fitBounds(bounds);
           // Render Directions
+          this.props.setDestination(destination.position);
           GoogleDirectionStore.getDirections(
             currentLocation,
             destination.position
@@ -94,7 +96,7 @@ const MapWithASearch = compose(
     }
   }),
   withGoogleMap
-)(props =>
+)(props => (
   <div>
     <GoogleMap
       center={props.currentLocation}
@@ -125,9 +127,9 @@ const MapWithASearch = compose(
           type="text"
         />
       </SearchBox>
-      {props.markers.map((marker, index) =>
+      {props.markers.map((marker, index) => (
         <Marker key={index} position={marker.position} />
-      )}
+      ))}
       {props.cars.map((car, index) => {
         return (
           <Marker
@@ -137,8 +139,8 @@ const MapWithASearch = compose(
               path: google.maps.SymbolPath.CIRCLE,
               scale: 10
             }}
-            onClick={() => {
-              props.selectModo(car);
+            onClick={e => {
+              props.selectModo(e.xa.target, car);
             }}
           />
         );
@@ -183,6 +185,6 @@ const MapWithASearch = compose(
       {props.directions && <DirectionsRenderer directions={props.directions} />}
     </GoogleMap>
   </div>
-);
+));
 
 export default MapWithASearch;
