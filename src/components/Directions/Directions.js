@@ -21,7 +21,6 @@ class Directions extends Component {
         {GoogleDirectionStore.mode !== 'DRIVING' &&
           <div>
             {leg.steps.map((step, i) => {
-              console.log('step: ', step);
               const distance = step.distance.text;
               const duration = step.duration.text;
               const instruction = step.instructions;

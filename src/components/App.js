@@ -123,7 +123,10 @@ class App extends Component {
                 />
                 {directions &&
                   directions.routes &&
-                  <Directions directions={this.state.directions} />}
+                  <Directions
+                    directions={this.state.directions}
+                    steps={this.state.steps}
+                  />}
                 {this.state.steps &&
                   <SelectedStep
                     step={this.state.steps.find(step => step.selected)}
