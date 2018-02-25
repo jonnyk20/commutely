@@ -122,24 +122,13 @@ class App extends Component {
                   selectStep={this.selectStep}
                 />
                 {directions &&
-<<<<<<< HEAD
                   directions.routes &&
-                  <Directions
-                    directions={this.state.directions}
-                    steps={this.state.steps}
-                  />}
+                  <Directions directions={this.state.directions} />}
                 {this.state.steps &&
-=======
-                  directions.routes && (
-                    <Directions directions={this.state.directions} />
-                  )}
-                {this.state.steps && (
->>>>>>> 85fb7ea6bab5d85fd5468e4d9615fd32fd637724
                   <SelectedStep
                     step={this.state.steps.find(step => step.selected)}
                     searchNewDirections={this.searchNewDirections}
-                  />
-                )}
+                  />}
               </div>
             );
           }
