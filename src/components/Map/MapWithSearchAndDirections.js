@@ -74,7 +74,6 @@ const MapWithASearch = compose(
           refs.map.fitBounds(bounds);
           // Render Directions
           const DirectionsService = new google.maps.DirectionsService();
-          console.log('DirectionsService.Route')
           DirectionsService.route(
             {
               origin: currentLocation,
@@ -83,7 +82,6 @@ const MapWithASearch = compose(
             },
             (result, status) => {
               if (status === google.maps.DirectionsStatus.OK) {
-                console.log('Status OK')
                 this.props.setDirections(result);
                 result.routes[0].legs[0].steps.forEach(step => {
                   console.log('step', step)
@@ -137,7 +135,6 @@ const MapWithASearch = compose(
       {props.directions && <DirectionsRenderer directions={props.directions} />}
       {props.steps &&
         props.steps.map(step => {
-          console.log('step!!!', step)
           return (
             <Polyline
               key={step.polyline.points}
