@@ -65,11 +65,10 @@ class App extends Component {
       this.state.currentLocation.lat,
       this.state.currentLocation.lng
     ).then(() => {
-      if (ModoStore.isLoading === false) {
-        ModoStore.findCarsFromLocation().then(res => {
-          this.setState({ cars: res });
-        });
-      }
+      ModoStore.findCarsFromLocation().then(res => {
+        this.setState({ cars: res });
+        console.log(this.state.cars);
+      });
     });
   }
 
