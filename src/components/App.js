@@ -23,6 +23,7 @@ class App extends Component {
           lng: coords.longitude
         };
         this.setState({ currentLocation: position });
+        this.handleLoadNearby();
       });
     }
   }
@@ -52,7 +53,6 @@ class App extends Component {
   };
 
   setDirections = directions => {
-    console.log('Settign directions in app');
     let stepId = 1;
     var points = [];
     var myRoute = directions.routes[0].legs[0];
@@ -63,27 +63,11 @@ class App extends Component {
       steps.push(step);
       stepId = stepId + 1;
     });
-    console.log('setting State with steps');
     this.setState({
       steps: steps,
       directions: directions
     });
   };
-  componentDidMount() {
-    if (navigator && navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(pos => {
-        const coords = pos.coords;
-        const position = {
-          lat: coords.latitude,
-          lng: coords.longitude
-        };
-        this.setState({ currentLocation: position });
-        this.handleLoadNearby();
-      });
-    }
-    // this.handleLoadCars();
-    // this.handleLoadAvailability();
-  }
 
   handleLoadNearby() {
     ModoStore.getNearby(
@@ -92,6 +76,7 @@ class App extends Component {
     ).then(() => {
       ModoStore.findCarsFromLocation().then(res => {
         this.setState({ cars: res });
+        console.log('Cars', this.state.cars);
       });
     });
   }
