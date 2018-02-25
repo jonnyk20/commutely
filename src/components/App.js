@@ -219,6 +219,11 @@ class App extends Component {
                     setDestination={this.setDestination}
                     setRefs={this.setRefs}
                   />
+                  {this.state.steps &&
+                    <SelectedStep
+                      step={this.state.steps.find(step => step.selected)}
+                      searchNewDirections={this.searchNewDirections}
+                    />}
                   {directions && directions.routes
                     ? <Directions
                         selectStep={this.selectStep}
@@ -229,11 +234,7 @@ class App extends Component {
                     : <Paper style={paperStyle}>
                         <span>Search for Location for Start</span>
                       </Paper>}
-                  {this.state.steps &&
-                    <SelectedStep
-                      step={this.state.steps.find(step => step.selected)}
-                      searchNewDirections={this.searchNewDirections}
-                    />}
+
                   {this.state.modoPopup &&
                     <Popover
                       open={this.state.modoPopup}

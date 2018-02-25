@@ -118,7 +118,7 @@ class ModoStore {
             });
             setTimeout(function() {
               resolve();
-            }, 2500);
+            }, 1500);
           }
         });
       }
