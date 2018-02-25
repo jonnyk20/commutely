@@ -74,8 +74,7 @@ const MapWithASearch = compose(
           // Render Directions
           GoogleDirectionStore.getDirections(
             currentLocation,
-            destination.position,
-            'TRANSIT'
+            destination.position
           )
             .then(res => {
               console.log('res: ', res);

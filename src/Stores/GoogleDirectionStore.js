@@ -1,18 +1,18 @@
 /* global google */
 
-
 class GoogleDirectionStore {
   constructor() {
     this.DirectionsService = new google.maps.DirectionsService();
-    console.log('constructed yay')
+    //always default to transit
+    this.mode = 'TRANSIT';
   }
-  getDirections = (origin, destination, mode = 'TRANSIT') => {
+  getDirections = (origin, destination) => {
     return new Promise((resolve, reject) => {
       this.DirectionsService.route(
         {
           origin: origin,
           destination: destination,
-          travelMode: google.maps.TravelMode[mode]
+          travelMode: google.maps.TravelMode[this.mode]
         },
         (result, status) => {
           if (status === google.maps.DirectionsStatus.OK) {
@@ -24,10 +24,9 @@ class GoogleDirectionStore {
         }
       );
     });
-  }
+  };
 }
 
-
 const store = new GoogleDirectionStore();
-console.log('store', store)
+console.log('store', store);
 export default store;
