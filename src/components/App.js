@@ -85,23 +85,33 @@ class App extends Component {
     });
   }
 
-  searchNewDirections = (step) => {
+  searchNewDirections = step => {
     console.log('searchingfornewdirections');
     console.log(step);
+    const origin = step.start_location;
+    const destination = step.end_location;
     // GoogleDirectionStore.
-  }
+    GoogleDirectionStore.mode = 'BICYCLING';
+    GoogleDirectionStore.getDirections(origin, destination).then(res => {
+      console.log('change to bike', res);
+      this.setDirections(res);
+      // res.routes[0].legs[0].steps.forEach(step => {
+      //   bounds.extend(step.start_location);
+      // });
+    });
+  };
 
   render() {
-    console.log('rendering app')
+    console.log('rendering app');
     const { currentLocation, directions } = this.state;
     return (
       <div className="App">
         <div> Hey </div>
         {(() => {
-          console.log('here')
-          console.log(currentLocation)
+          console.log('here');
+          console.log(currentLocation);
           if (currentLocation && currentLocation.lat) {
-            console.log('here again')
+            console.log('here again');
             return (
               <div>
                 <MapWithSearchAndDirections
@@ -114,10 +124,11 @@ class App extends Component {
                 {directions &&
                   directions.routes &&
                   <Directions directions={this.state.directions} />}
-                {this.state.steps && <SelectedStep
-                  step={this.state.steps.find(step => step.selected)}
-                  searchNewDirections={this.searchNewDirections}
-                />}
+                {this.state.steps &&
+                  <SelectedStep
+                    step={this.state.steps.find(step => step.selected)}
+                    searchNewDirections={this.searchNewDirections}
+                  />}
               </div>
             );
           }
