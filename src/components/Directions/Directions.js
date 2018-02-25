@@ -10,9 +10,17 @@ import MapsDirectionsBike from 'material-ui/svg-icons/maps/directions-bike';
 import NotificationDriveEta from 'material-ui/svg-icons/notification/drive-eta';
 import MapsPlace from 'material-ui/svg-icons/maps/place';
 import RaisedButton from 'material-ui/RaisedButton';
+import Popover from 'material-ui/Popover';
+import Menu from 'material-ui/Menu';
+import MenuItem from 'material-ui/MenuItem';
 import Step from './Step';
+import PopoverStep from './PopoverStep';
 
 class Directions extends Component {
+  state = {
+    openPopover: false
+  };
+
   getModeIcon(mode) {
     switch (mode) {
       case 'TRANSIT':
@@ -46,8 +54,14 @@ class Directions extends Component {
     if (newNmae) return newNmae.slice(0, 1).toUpperCase() + newNmae.slice(1);
   }
 
+  handleRequestClose = () => {
+    this.setState({
+      openPopover: false
+    });
+  };
+
   render() {
-    const { directions, steps } = this.props;
+    const { directions, steps, searchNewDirections } = this.props;
     const leg = directions.routes[0].legs[0];
     let duration = 0;
     let distance = 0;
@@ -86,8 +100,13 @@ class Directions extends Component {
               return (
                 <div
                   key={`icon-${i}`}
-                  onClick={() => {
+                  onClick={e => {
                     if (mode !== 'WALKING') {
+                      console.log('evet:', e.currentTarget);
+                      this.setState({
+                        openPopover: true,
+                        anchorEl: e.currentTarget
+                      });
                       this.props.selectStep(step.id);
                     }
                   }}>
@@ -109,6 +128,17 @@ class Directions extends Component {
                 </div>
               );
             })}
+            <Popover
+              open={this.state.openPopover}
+              anchorEl={this.state.anchorEl}
+              anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
+              targetOrigin={{ horizontal: 'left', vertical: 'bottom' }}
+              onRequestClose={this.handleRequestClose}>
+              <PopoverStep
+                step={steps.find(step => step.selected)}
+                searchNewDirections={searchNewDirections}
+              />
+            </Popover>
             <TotalText>
               <MapsPlace /> {destinationAdd}
             </TotalText>
