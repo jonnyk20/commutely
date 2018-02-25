@@ -16,7 +16,7 @@ class App extends Component {
     directions: {},
     cars: [],
     modoPopup: false,
-    selectedCar: ''
+    selectedCar: {}
   };
 
   componentDidMount() {
@@ -132,9 +132,7 @@ class App extends Component {
   };
 
   selectModo = car => {
-    console.log('Select Modo');
-    console.log(car);
-    // this.setState({ modoPopup: true, selectedCar: car });
+    this.setState({ modoPopup: true, selectedCar: car });
   };
 
   render() {
