@@ -138,7 +138,6 @@ class App extends Component {
   };
 
   searchNewDirections = (step, mode) => {
-    this.setState({ cars: [] });
     GoogleDirectionStore.mode = mode;
     const bounds = new google.maps.LatLngBounds();
     if (!step) {
@@ -153,6 +152,16 @@ class App extends Component {
             bounds.extend(step.start_location);
           });
           this.state.refs.map.fitBounds(bounds);
+
+          if (mode === 'DRIVING') {
+            this.setState({ cars: [] });
+            if (this.state.currentLocation) {
+              this.findCarLocation(
+                this.state.currentLocation.lat,
+                this.state.currentLocation.lng
+              );
+            }
+          }
         })
         .catch(err => {
           console.err(`err fetching directions ${err}`);
@@ -167,7 +176,8 @@ class App extends Component {
       this.replaceDirections(step, res.routes[0].legs[0].steps, res.routes[0]);
     });
     if (mode === 'DRIVING') {
-      if (origin.lat) {
+      this.setState({ cars: [] });
+      if (origin) {
         this.findCarLocation(origin.lat(), origin.lng());
       }
     }
@@ -177,7 +187,6 @@ class App extends Component {
     ModoStore.getNearby(lat, lng).then(() => {
       ModoStore.findCarsFromLocation().then(() => {
         this.setState({ cars: ModoStore.blankArray });
-        console.log(this.state.cars);
       });
     });
   };
