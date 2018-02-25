@@ -40,16 +40,6 @@ class App extends Component {
           lng: coords.longitude
         };
         this.setState({ currentLocation: position });
-
-        ModoStore.getNearby(
-          this.state.currentLocation.lat,
-          this.state.currentLocation.lng
-        ).then(() => {
-          ModoStore.findCarsFromLocation().then(() => {
-            this.setState({ cars: ModoStore.blankArray });
-            console.log(this.state.cars);
-          });
-        });
       });
     }
     // experimental firebase stuff
@@ -135,11 +125,24 @@ class App extends Component {
   };
 
   searchNewDirections = (step, mode) => {
+    this.setState({ cars: [] });
     const origin = step.start_location;
     const destination = step.end_location;
     GoogleDirectionStore.mode = mode;
     GoogleDirectionStore.getDirections(origin, destination).then(res => {
       this.replaceDirections(step, res.routes[0].legs[0].steps, res.routes[0]);
+    });
+    if (mode === 'DRIVING') {
+      this.findCarLocation(origin.lat(), origin.lng());
+    }
+  };
+
+  findCarLocation = (lat, lng) => {
+    ModoStore.getNearby(lat, lng).then(() => {
+      ModoStore.findCarsFromLocation().then(() => {
+        this.setState({ cars: ModoStore.blankArray });
+        console.log(this.state.cars);
+      });
     });
   };
 
