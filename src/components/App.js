@@ -5,6 +5,7 @@ import ModoStore from '../Stores/ModoStore';
 import GoogleDirectionStore from '../Stores/GoogleDirectionStore';
 import MapWithSearchAndDirections from './Map/MapWithSearchAndDirections';
 import Directions from './Directions/Directions';
+import SelectedStep from './Directions/SelectedStep';
 
 class App extends Component {
   state = {
@@ -30,9 +31,6 @@ class App extends Component {
   setDirections = directions => {
     console.log('Settign directions in app');
     let stepId = 1;
-    this.setState({
-      directions: directions
-    });
     var points = [];
     var myRoute = directions.routes[0].legs[0];
     const steps = [];
@@ -62,16 +60,6 @@ class App extends Component {
     this.handleLoadNearby();
     // this.handleLoadCars();
     // this.handleLoadAvailability();
-    console.log('using google store')
-    GoogleDirectionStore.getDirections({ lat: 49.2035681, lng: -122.9126894 }, { lat: 49.2348813, lng: -123.02525550000001 })
-      .then((data) => {
-        console.log('call successful');
-        console.log(data)
-      })
-      .catch((error) => {
-        console.log('fail');
-        console.log(error)
-      })
   }
 
   handleLoadNearby(lat = null, lng = null) {
@@ -100,8 +88,10 @@ class App extends Component {
     });
   }
 
-  getNewDirections = () => {
-
+  searchNewDirections = (step) => {
+    console.log('searchingfornewdirections');
+    console.log(step);
+    // GoogleDirectionStore.
   }
 
   render() {
@@ -123,6 +113,10 @@ class App extends Component {
                 {directions &&
                   directions.routes &&
                   <Directions directions={this.state.directions} />}
+                {this.state.steps && <SelectedStep
+                  step={this.state.steps.find(step => step.selected)}
+                  searchNewDirections={this.searchNewDirections}
+                />}
               </div>
             );
           }

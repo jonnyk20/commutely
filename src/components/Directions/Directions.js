@@ -14,7 +14,7 @@ class Directions extends Component {
         <div>{`duration: ${leg.duration.text}`}</div>
         <div>{`distance: ${leg.distance.text}`}</div>
         {leg.steps.map((step, i) => {
-          console.log('step: ', step);
+          console.log('step: ', step.id, step);
           const distance = step.distance.text;
           const duration = step.duration.text;
           const instruction = step.instructions;
@@ -23,7 +23,7 @@ class Directions extends Component {
             <div
               key={
                 i
-              }>{`steps: ${mode} ${distance} (${duration}) - ${instruction} `}</div>
+              }>{`step ${step.id}: ${mode} ${distance} (${duration}) - ${instruction} `}</div>
           );
         })}
       </div>
