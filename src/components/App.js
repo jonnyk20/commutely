@@ -1,4 +1,4 @@
-/* global google */
+/* global google, firebase */
 import React, { Component } from 'react';
 
 import ModoStore from '../Stores/ModoStore';
@@ -7,6 +7,8 @@ import MapWithSearchAndDirections from './Map/MapWithSearchAndDirections';
 import Directions from './Directions/Directions';
 import SelectedStep from './Directions/SelectedStep';
 import ModoButton from './ModoButton';
+
+import NotificationResource from '../Resources/NotificationsResource';
 
 class App extends Component {
   state = {
@@ -36,9 +38,16 @@ class App extends Component {
         });
       });
     }
+    // experimental firebase stuff
+    this.notifications = new NotificationResource(
+      firebase.messaging(),
+      firebase.database()
+    );
+    //this.notifications.notify('hey');
   }
 
   selectStep = stepId => {
+    console.log('selected: ', stepId);
     const newSteps = this.state.steps.map(step => {
       step.selected = step.id === stepId ? true : false;
       return step;
@@ -60,6 +69,7 @@ class App extends Component {
     this.setState({
       steps: newStepsArray
     });
+    console.log('step: ', this.state.steps);
   };
 
   setDirections = directions => {
@@ -106,7 +116,11 @@ class App extends Component {
                 />
                 {directions &&
                   directions.routes && (
-                    <Directions directions={this.state.directions} />
+                    <Directions
+                      selectStep={this.selectStep}
+                      directions={this.state.directions}
+                      steps={this.state.steps}
+                    />
                   )}
                 {this.state.steps && (
                   <SelectedStep
