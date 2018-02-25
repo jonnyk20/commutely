@@ -40,6 +40,7 @@ const MapWithASearch = compose(
         center: currentLocation,
         onMapMounted: ref => {
           refs.map = ref;
+          this.props.setRefs(ref);
         },
         onBoundsChanged: () => {
           this.setState({
@@ -74,6 +75,7 @@ const MapWithASearch = compose(
           });
           // refs.map.fitBounds(bounds);
           // Render Directions
+          this.props.setDestination(destination.position);
           GoogleDirectionStore.getDirections(
             currentLocation,
             destination.position

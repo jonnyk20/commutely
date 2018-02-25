@@ -30,6 +30,19 @@ class App extends Component {
     selectedCar: {},
     target: {}
   };
+  setRefs = ref => {
+    console.log('setting Refs');
+    console.log('refs', ref);
+    this.setState({
+      refs: { map: ref }
+    });
+  };
+
+  setDestination = destination => {
+    this.setState({
+      destination: destination
+    });
+  };
 
   componentDidMount() {
     if (navigator && navigator.geolocation) {
@@ -126,14 +139,37 @@ class App extends Component {
 
   searchNewDirections = (step, mode) => {
     this.setState({ cars: [] });
+    GoogleDirectionStore.mode = mode;
+    const bounds = new google.maps.LatLngBounds();
+    if (!step) {
+      GoogleDirectionStore.getDirections(
+        this.state.currentLocation,
+        this.state.destination
+      )
+        .then(res => {
+          this.setDirections(res);
+
+          res.routes[0].legs[0].steps.forEach(step => {
+            bounds.extend(step.start_location);
+          });
+          this.state.refs.map.fitBounds(bounds);
+        })
+        .catch(err => {
+          console.err(`err fetching directions ${err}`);
+          this.state.refs.map.fitBounds(bounds);
+        });
+      return;
+    }
+
     const origin = step.start_location;
     const destination = step.end_location;
-    GoogleDirectionStore.mode = mode;
     GoogleDirectionStore.getDirections(origin, destination).then(res => {
       this.replaceDirections(step, res.routes[0].legs[0].steps, res.routes[0]);
     });
     if (mode === 'DRIVING') {
-      this.findCarLocation(origin.lat(), origin.lng());
+      if (origin.lat) {
+        this.findCarLocation(origin.lat(), origin.lng());
+      }
     }
   };
 
@@ -167,6 +203,8 @@ class App extends Component {
                     selectStep={this.selectStep}
                     cars={this.state.cars}
                     selectModo={this.selectModo}
+                    setDestination={this.setDestination}
+                    setRefs={this.setRefs}
                   />
                   {directions &&
                     directions.routes && (
