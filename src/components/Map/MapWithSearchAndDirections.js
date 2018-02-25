@@ -129,12 +129,24 @@ const MapWithASearch = compose(
       )}
       {props.steps &&
         props.steps.map(step => {
+          console.log()
+          let color = "green";
+          switch (true) {
+            case (step.new):
+              color = "blue"
+              break;
+            case (step.selected === true):
+              color = "red";
+              break;
+            default:
+              break;
+          }
           return (
             <Polyline
               key={step.polyline.points}
               path={step.lat_lngs}
               options={{
-                strokeColor: step.selected ? 'red' : 'blue',
+                strokeColor: color,
                 strokeWeight: 5
               }}
               onClick={() => {
