@@ -83,7 +83,7 @@ class App extends Component {
       distance: {
         text: `${(distance / 1000).toFixed(2)} km`
       },
-      mode: steps[0].travel_mode,
+      travel_mode: steps[0].travel_mode,
       instructions: `${humanizeMode} to ${routes.legs[0].end_address}`,
       lat_lngs: lat_lngs
     };
@@ -99,10 +99,10 @@ class App extends Component {
       1,
       calculatedNewSteps
     );
-    console.log('setting update steps', newStepsArray);
     this.setState({
       steps: newStepsArray
     });
+    GoogleDirectionStore.mode = 'TRANSIT';
   };
 
   setDirections = directions => {

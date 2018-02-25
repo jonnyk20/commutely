@@ -24,7 +24,6 @@ class Directions extends Component {
     const departureTime = moment().format('LT');
     const arrivalTime = moment().add(duration, 's').format('LT');
     const durationTime = moment.duration(duration, 'seconds').humanize();
-    let newStep = [];
     return (
       <div className="Directions">
         <div> Directions go Here </div>
@@ -45,9 +44,6 @@ class Directions extends Component {
               ''
             );
             const mode = step.travel_mode;
-            if (step.new) {
-              newStep.push(step);
-            }
             return (
               <div
                 key={i}
