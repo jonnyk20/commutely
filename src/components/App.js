@@ -4,6 +4,8 @@ import moment from 'moment';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import Popover from 'material-ui/Popover';
+import Paper from 'material-ui/Paper';
+
 import { styles, palette } from '../styles/Theme';
 import ModoStore from '../Stores/ModoStore';
 import GoogleDirectionStore from '../Stores/GoogleDirectionStore';
@@ -217,14 +219,16 @@ class App extends Component {
                     setDestination={this.setDestination}
                     setRefs={this.setRefs}
                   />
-                  {directions &&
-                    directions.routes &&
-                    <Directions
-                      selectStep={this.selectStep}
-                      directions={this.state.directions}
-                      steps={this.state.steps}
-                      searchNewDirections={this.searchNewDirections}
-                    />}
+                  {directions && directions.routes
+                    ? <Directions
+                        selectStep={this.selectStep}
+                        directions={this.state.directions}
+                        steps={this.state.steps}
+                        searchNewDirections={this.searchNewDirections}
+                      />
+                    : <Paper style={paperStyle}>
+                        <span>Search for Location for Start</span>
+                      </Paper>}
                   {this.state.steps &&
                     <SelectedStep
                       step={this.state.steps.find(step => step.selected)}
@@ -269,4 +273,13 @@ class App extends Component {
   }
 }
 
+const paperStyle = {
+  margin: '20px 15%',
+  height: '100px',
+  padding: '15px',
+  textAlign: 'center',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center'
+};
 export default App;
