@@ -9,7 +9,8 @@ import {
   GoogleMap,
   Marker,
   DirectionsRenderer,
-  Polyline
+  Polyline,
+  InfoWindow
 } from 'react-google-maps';
 import { SearchBox } from 'react-google-maps/lib/components/places/SearchBox';
 
@@ -126,6 +127,21 @@ const MapWithASearch = compose(
       </SearchBox>
       {props.markers.map((marker, index) =>
         <Marker key={index} position={marker.position} />
+      )}
+      {props.cars.map((car, index) => {
+        console.log('car', car);
+        return (
+          <Marker key={index} position={{ lat: Number(car.lat), lng: Number(car.lng) }} icon={
+            {
+              path: google.maps.SymbolPath.CIRCLE,
+              scale: 10
+            }
+          }
+            onClick={() => { props.selectModo(car) }}
+          >
+          </Marker>
+        )
+      }
       )}
       {props.steps &&
         props.steps.map((step, i) => {

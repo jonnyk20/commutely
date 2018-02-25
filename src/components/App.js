@@ -7,14 +7,16 @@ import MapWithSearchAndDirections from './Map/MapWithSearchAndDirections';
 import Directions from './Directions/Directions';
 import SelectedStep from './Directions/SelectedStep';
 import ModoButton from './ModoButton';
-
+import ModoPopup from './ModoPopup';
 import NotificationResource from '../Resources/NotificationsResource';
 
 class App extends Component {
   state = {
     currentLocation: {},
     directions: {},
-    cars: []
+    cars: [],
+    modoPopup: false,
+    selectedCar: ''
   };
 
   componentDidMount() {
@@ -129,6 +131,12 @@ class App extends Component {
     });
   };
 
+  selectModo = (car) => {
+    console.log('Select Modo')
+    console.log(car);
+    // this.setState({ modoPopup: true, selectedCar: car });
+  }
+
   render() {
     const { currentLocation, directions } = this.state;
     return (
@@ -144,6 +152,8 @@ class App extends Component {
                   path={this.state.path}
                   steps={this.state.steps}
                   selectStep={this.selectStep}
+                  cars={this.state.cars}
+                  selectModo={this.selectModo}
                 />
                 {directions &&
                   directions.routes &&
@@ -156,7 +166,9 @@ class App extends Component {
                   <SelectedStep
                     step={this.state.steps.find(step => step.selected)}
                     searchNewDirections={this.searchNewDirections}
-                  />}
+                  />
+                }
+                {this.state.modoPopup && <ModoPopup selectedCar={this.state.selectedCar} />}
                 {/* {this.state.cars && <ModoButton carId={this.state.cars[0]} />} */}
               </div>
             );
