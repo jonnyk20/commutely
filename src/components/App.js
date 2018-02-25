@@ -29,6 +29,7 @@ class App extends Component {
   }
 
   selectStep = stepId => {
+    console.log('selected: ', stepId);
     const newSteps = this.state.steps.map(step => {
       step.selected = step.id === stepId ? true : false;
       return step;
@@ -50,6 +51,7 @@ class App extends Component {
     this.setState({
       steps: newStepsArray
     });
+    console.log('step: ', this.state.steps);
   };
 
   setDirections = directions => {
@@ -110,7 +112,11 @@ class App extends Component {
                 />
                 {directions &&
                   directions.routes &&
-                  <Directions directions={this.state.directions} />}
+                  <Directions
+                    selectStep={this.selectStep}
+                    directions={this.state.directions}
+                    steps={this.state.steps}
+                  />}
                 {this.state.steps &&
                   <SelectedStep
                     step={this.state.steps.find(step => step.selected)}
