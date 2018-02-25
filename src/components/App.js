@@ -10,18 +10,29 @@ class App extends Component {
   state = {
     currentLocation: {},
     directions: {},
-    lat: 49.201,
-    lng: -122.91,
-    cars: {},
-    nearby: {},
-    available: {}
+    cars: {}
   };
+
+  componentDidMount() {
+    if (navigator && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(pos => {
+        const coords = pos.coords;
+        const position = {
+          lat: coords.latitude,
+          lng: coords.longitude
+        };
+        this.setState({ currentLocation: position });
+        this.handleLoadNearby();
+      });
+    }
+  }
 
   selectStep = stepId => {
     const newSteps = this.state.steps.map(step => {
       step.selected = step.id === stepId ? true : false;
       return step;
     });
+
     this.setState({
       steps: newSteps
     });
@@ -48,61 +59,23 @@ class App extends Component {
       directions: directions
     });
   };
-  componentDidMount() {
-    if (navigator && navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(pos => {
-        const coords = pos.coords;
-        const position = {
-          lat: coords.latitude,
-          lng: coords.longitude
-        };
-        this.setState({ currentLocation: position });
-      });
-    }
-    this.handleLoadNearby();
-    // this.handleLoadCars();
-    // this.handleLoadAvailability();
-    console.log('using google store')
-    GoogleDirectionStore.getDirections({ lat: 49.2035681, lng: -122.9126894 }, { lat: 49.2348813, lng: -123.02525550000001 })
-      .then((data) => {
-        console.log('call successful');
-        console.log(data)
-      })
-      .catch((error) => {
-        console.log('fail');
-        console.log(error)
-      })
-  }
 
-  handleLoadNearby(lat = null, lng = null) {
-    ModoStore.getNearby(this.state.lat, this.state.lng).then(() => {
+  handleLoadNearby() {
+    ModoStore.getNearby(
+      this.state.currentLocation.lat,
+      this.state.currentLocation.lng
+    ).then(() => {
       if (ModoStore.isLoading === false) {
-        this.setState({ nearby: ModoStore.nearby });
+        ModoStore.findCarsFromLocation().then(res => {
+          this.setState({ cars: res });
+        });
       }
     });
   }
 
-  handleLoadCars() {
-    ModoStore.getCars().then(() => {
-      if (ModoStore.isLoading === false) {
-        this.setState({ nearby: ModoStore.cars });
-        //console.log(this.state.cars);
-      }
-    });
-  }
-
-  handleLoadAvailability() {
-    ModoStore.getAvailability().then(() => {
-      if (ModoStore.isLoading === false) {
-        this.setState({ available: ModoStore.availability });
-        //console.log(this.state.availability);
-      }
-    });
-  }
-
-  getNewDirections = () => {
-
-  }
+  // getNewDirections = () => {
+  //
+  // }
 
   render() {
     const { currentLocation, directions } = this.state;
@@ -121,8 +94,9 @@ class App extends Component {
                   selectStep={this.selectStep}
                 />
                 {directions &&
-                  directions.routes &&
-                  <Directions directions={this.state.directions} />}
+                  directions.routes && (
+                    <Directions directions={this.state.directions} />
+                  )}
               </div>
             );
           }
