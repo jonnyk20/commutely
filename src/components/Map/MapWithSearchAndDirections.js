@@ -12,6 +12,7 @@ import {
   Polyline
 } from 'react-google-maps';
 import { SearchBox } from 'react-google-maps/lib/components/places/SearchBox';
+import GoogleDirectionStore from 'Stores/GoogleDirectionStore';
 
 let home;
 const douglas = { lat: 49.2035681, lng: -122.9126894 };
@@ -71,25 +72,23 @@ const MapWithASearch = compose(
           });
           refs.map.fitBounds(bounds);
           // Render Directions
-          const DirectionsService = new google.maps.DirectionsService();
-          DirectionsService.route(
-            {
-              origin: currentLocation,
-              destination: destination.position,
-              travelMode: google.maps.TravelMode.TRANSIT
-            },
-            (result, status) => {
-              if (status === google.maps.DirectionsStatus.OK) {
-                this.props.setDirections(result);
-                result.routes[0].legs[0].steps.forEach(step => {
-                  bounds.extend(step.start_location);
-                });
-              } else {
-                console.error(`error fetching directions ${result}`);
-              }
+          GoogleDirectionStore.getDirections(
+            currentLocation,
+            destination.position,
+            'TRANSIT'
+          )
+            .then(res => {
+              console.log('res: ', res);
+              this.props.setDirections(res);
+              res.routes[0].legs[0].steps.forEach(step => {
+                bounds.extend(step.start_location);
+              });
               refs.map.fitBounds(bounds);
-            }
-          );
+            })
+            .catch(err => {
+              console.err(`err fetching directions ${err}`);
+              refs.map.fitBounds(bounds);
+            });
         }
       });
     }
