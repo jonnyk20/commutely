@@ -86,37 +86,40 @@ class ModoStore {
   };
 
   findCarsFromLocation = () => {
-    if (this.nearby['Locations'].length > 0) {
-      this.getCars().then(cars => {
-        if (cars instanceof Object) {
-          const locations = this.nearby['Locations'];
-          Object.keys(cars).forEach(key => {
-            locations.forEach(location => {
-              if (
-                cars[key]['Location'][0]['LocationID'] ===
-                location['LocationID']
-              ) {
-                const cords = this.findLocation(
-                  cars[key]['Location'][0]['LocationID']
-                );
-                const obj = {
-                  id: cars[key]['ID'],
-                  make: cars[key]['Make'],
-                  model: cars[key]['Model'],
-                  category: cars[key]['Category'],
-                  year: cars[key]['Year'],
-                  seats: cars[key]['Seats'],
-                  location_id: cars[key]['Location'][0]['LocationID'],
-                  lat: cords.lat,
-                  lng: cords.lng
-                };
-                this.nearbyCars.push(obj);
-              }
+    return new Promise(resolve => {
+      if (this.nearby['Locations'].length > 0) {
+        this.getCars().then(cars => {
+          if (cars instanceof Object) {
+            const locations = this.nearby['Locations'];
+            Object.keys(cars).forEach(key => {
+              locations.forEach(location => {
+                if (
+                  cars[key]['Location'][0]['LocationID'] ===
+                  location['LocationID']
+                ) {
+                  const cords = this.findLocation(
+                    cars[key]['Location'][0]['LocationID']
+                  );
+                  const obj = {
+                    id: cars[key]['ID'],
+                    make: cars[key]['Make'],
+                    model: cars[key]['Model'],
+                    category: cars[key]['Category'],
+                    year: cars[key]['Year'],
+                    seats: cars[key]['Seats'],
+                    location_id: cars[key]['Location'][0]['LocationID'],
+                    lat: cords.lat,
+                    lng: cords.lng
+                  };
+                  this.nearbyCars.push(obj);
+                }
+              });
             });
-          });
-        }
-      });
-    }
+          }
+        });
+      }
+      resolve(this.nearbyCars);
+    });
   };
 }
 
