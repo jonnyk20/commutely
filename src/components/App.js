@@ -14,7 +14,8 @@ class App extends Component {
   state = {
     currentLocation: {},
     directions: {},
-    cars: []
+    cars: [],
+    carSelected: false
   };
 
   componentDidMount() {
@@ -128,7 +129,13 @@ class App extends Component {
                     searchNewDirections={this.searchNewDirections}
                   />
                 )}
-                {/* {this.state.cars && <ModoButton carId={this.state.cars[0]} />} */}
+                <button
+                  onClick={() => {
+                    this.setState({ carSelected: true });
+                  }}>
+                  Selected Car
+                </button>
+                {this.state.carSelected && <ModoButton car={this.props.cars} />}
               </div>
             );
           }
