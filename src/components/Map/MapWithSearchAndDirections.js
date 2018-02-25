@@ -16,8 +16,6 @@ import { SearchBox } from 'react-google-maps/lib/components/places/SearchBox';
 import GoogleDirectionStore from '../../Stores/GoogleDirectionStore'
 import mapStyle from './mapStyle.json';
 
-console.log('style!!!!', mapStyle)
-
 let home;
 const testLocation = { lat: 49.23124000000001, lng: -123.00459539999997 };
 const douglas = { lat: 49.2035681, lng: -122.9126894 };
