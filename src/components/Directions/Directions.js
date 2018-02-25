@@ -14,14 +14,14 @@ class Directions extends Component {
         <div>{`arrival time: ${leg.arrival_time.text}`}</div>
         <div>{`duration: ${leg.duration.text}`}</div>
         <div>{`distance: ${leg.distance.text}`}</div>
-        {leg.steps.map(step => {
+        {leg.steps.map((step, i) => {
           console.log(step);
           const distance = step.distance.text;
           const duration = step.duration.text;
           const instruction = step.instructions;
           const mode = step.travel_mode;
           return (
-            <div>{`steps: ${mode} ${distance} (${duration}) - ${instruction} `}</div>
+            <div key={i} >{`steps: ${mode} ${distance} (${duration}) - ${instruction} `}</div>
           );
         })}
       </div>
