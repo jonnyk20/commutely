@@ -12,9 +12,11 @@ import {
   Polyline
 } from 'react-google-maps';
 import { SearchBox } from 'react-google-maps/lib/components/places/SearchBox';
-import GoogleDirectionStore from 'Stores/GoogleDirectionStore';
+
+import GoogleDirectionStore from '../../Stores/GoogleDirectionStore'
 
 let home;
+const testLocation = { lat: 49.23124000000001, lng: -123.00459539999997 };
 const douglas = { lat: 49.2035681, lng: -122.9126894 };
 let destination;
 
@@ -22,7 +24,7 @@ const MapWithASearch = compose(
   withProps({
     loadingElement: <div style={{ height: `100%` }} />,
     containerElement: <div style={{ height: `300px` }} />,
-    mapElement: <div style={{ height: `100%` }} />
+    mapElement: <div style={{ height: `100%` }} />,
   }),
   lifecycle({
     componentWillMount() {
@@ -55,7 +57,6 @@ const MapWithASearch = compose(
               bounds.extend(place.geometry.location);
             }
           });
-          bounds.extend(currentLocation);
           const nextMarkers = places.map(place => ({
             position: place.geometry.location
           }));
@@ -65,17 +66,16 @@ const MapWithASearch = compose(
             this.state.center
           );
           destination = nextMarkers[0];
-
+          console.log('destination', destination);
           this.setState({
             center: nextCenter,
             markers: [this.state.markers[0], nextMarkers[0]]
           });
-          refs.map.fitBounds(bounds);
+          // refs.map.fitBounds(bounds);
           // Render Directions
           GoogleDirectionStore.getDirections(
             currentLocation,
-            destination.position,
-            'TRANSIT'
+            destination.position
           )
             .then(res => {
               console.log('res: ', res);
@@ -127,7 +127,6 @@ const MapWithASearch = compose(
       {props.markers.map((marker, index) =>
         <Marker key={index} position={marker.position} />
       )}
-      {props.directions && <DirectionsRenderer directions={props.directions} />}
       {props.steps &&
         props.steps.map(step => {
           return (
@@ -144,6 +143,8 @@ const MapWithASearch = compose(
             />
           );
         })}
+
+      {props.directions && <DirectionsRenderer directions={props.directions} />}
     </GoogleMap>
   </div>
 );

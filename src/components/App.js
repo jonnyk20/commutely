@@ -11,18 +11,29 @@ class App extends Component {
   state = {
     currentLocation: {},
     directions: {},
-    lat: 49.201,
-    lng: -122.91,
-    cars: {},
-    nearby: {},
-    available: {}
+    cars: {}
   };
+
+  componentDidMount() {
+    if (navigator && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(pos => {
+        const coords = pos.coords;
+        const position = {
+          lat: coords.latitude,
+          lng: coords.longitude
+        };
+        this.setState({ currentLocation: position });
+        this.handleLoadNearby();
+      });
+    }
+  }
 
   selectStep = stepId => {
     const newSteps = this.state.steps.map(step => {
       step.selected = step.id === stepId ? true : false;
       return step;
     });
+
     this.setState({
       steps: newSteps
     });
@@ -55,36 +66,22 @@ class App extends Component {
           lng: coords.longitude
         };
         this.setState({ currentLocation: position });
+        this.handleLoadNearby();
       });
     }
-    this.handleLoadNearby();
     // this.handleLoadCars();
     // this.handleLoadAvailability();
   }
 
-  handleLoadNearby(lat = null, lng = null) {
-    ModoStore.getNearby(this.state.lat, this.state.lng).then(() => {
-      if (ModoStore.isLoading === false) {
-        this.setState({ nearby: ModoStore.nearby });
-      }
-    });
-  }
-
-  handleLoadCars() {
-    ModoStore.getCars().then(() => {
-      if (ModoStore.isLoading === false) {
-        this.setState({ nearby: ModoStore.cars });
-        //console.log(this.state.cars);
-      }
-    });
-  }
-
-  handleLoadAvailability() {
-    ModoStore.getAvailability().then(() => {
-      if (ModoStore.isLoading === false) {
-        this.setState({ available: ModoStore.availability });
-        //console.log(this.state.availability);
-      }
+  handleLoadNearby() {
+    ModoStore.getNearby(
+      this.state.currentLocation.lat,
+      this.state.currentLocation.lng
+    ).then(() => {
+      ModoStore.findCarsFromLocation().then(res => {
+        this.setState({ cars: res });
+        console.log(this.state.cars);
+      });
     });
   }
 
@@ -95,12 +92,16 @@ class App extends Component {
   }
 
   render() {
+    console.log('rendering app')
     const { currentLocation, directions } = this.state;
     return (
       <div className="App">
         <div> Hey </div>
         {(() => {
+          console.log('here')
+          console.log(currentLocation)
           if (currentLocation && currentLocation.lat) {
+            console.log('here again')
             return (
               <div>
                 <MapWithSearchAndDirections

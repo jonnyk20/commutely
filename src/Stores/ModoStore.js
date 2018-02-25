@@ -1,10 +1,10 @@
 import FetchResource from '../Resources/FetchResource';
 
 class ModoStore {
-  nearby = {};
-  car_list = {};
-  availability = {};
-  cost = {};
+  nearby = [];
+  nearbyCars = [];
+  locations = [];
+  availability = [];
   isLoading = true;
 
   getNearby(lat, lng) {
@@ -27,9 +27,10 @@ class ModoStore {
       this.isLoading = true;
       FetchResource.callModo('car_list')
         .then(res => {
-          this.car_list = res.Response;
           this.isLoading = false;
-          resolve();
+          this.getLocations().then(() => {
+            resolve(res.Response['Cars']);
+          });
         })
         .catch(err => {
           console.log(err);
@@ -51,6 +52,75 @@ class ModoStore {
         });
     });
   }
+
+  getLocations() {
+    return new Promise(resolve => {
+      this.isLoading = true;
+      FetchResource.callModo('location_list')
+        .then(res => {
+          this.locations = res.Response['Locations'];
+          this.isLoading = false;
+          resolve();
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    });
+  }
+
+  findLocation = id => {
+    const locations = this.locations;
+    let result = {};
+
+    for (let key in locations) {
+      if (locations[key]['ID'] === id) {
+        result = {
+          lat: locations[key]['Latitude'],
+          lng: locations[key]['Longitude']
+        };
+        break;
+      }
+    }
+
+    return result;
+  };
+
+  findCarsFromLocation = () => {
+    return new Promise(resolve => {
+      if (this.nearby['Locations'].length > 0) {
+        this.getCars().then(cars => {
+          if (cars instanceof Object) {
+            const locations = this.nearby['Locations'];
+            Object.keys(cars).forEach(key => {
+              locations.forEach(location => {
+                if (
+                  cars[key]['Location'][0]['LocationID'] ===
+                  location['LocationID']
+                ) {
+                  const cords = this.findLocation(
+                    cars[key]['Location'][0]['LocationID']
+                  );
+                  const obj = {
+                    id: cars[key]['ID'],
+                    make: cars[key]['Make'],
+                    model: cars[key]['Model'],
+                    category: cars[key]['Category'],
+                    year: cars[key]['Year'],
+                    seats: cars[key]['Seats'],
+                    location_id: cars[key]['Location'][0]['LocationID'],
+                    lat: cords.lat,
+                    lng: cords.lng
+                  };
+                  this.nearbyCars.push(obj);
+                }
+              });
+            });
+          }
+        });
+      }
+      resolve(this.nearbyCars);
+    });
+  };
 }
 
 const store = new ModoStore();
