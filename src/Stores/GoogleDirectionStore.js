@@ -11,7 +11,7 @@ class GoogleDirectionStore {
       this.DirectionsService.route(
         {
           origin: origin,
-          destination: destination.position,
+          destination: destination,
           travelMode: google.maps.TravelMode[mode]
         },
         (result, status) => {

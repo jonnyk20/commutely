@@ -4,7 +4,6 @@ class Directions extends Component {
   render() {
     const { directions } = this.props;
     const leg = directions.routes[0].legs[0];
-    console.log('render: ', leg);
     return (
       <div className="Directions">
         <div> Directions go Here </div>
