@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import FlatButton from 'material-ui/FlatButton';
 
 class SelectedStep extends Component {
   handleClick(mode) {
@@ -8,17 +9,23 @@ class SelectedStep extends Component {
   render() {
     return (
       <div>
-        <div> Selected Selected </div>
+        <div> Select Method </div>
         <div>
-          <button onClick={this.handleClick.bind(this, 'BICYCLING')}>
-            {' '}Bike{' '}
-          </button>
-          <button onClick={this.handleClick.bind(this, 'DRIVING')}>
-            CarShare
-          </button>
-          <button onClick={this.handleClick.bind(this, 'TRANSIT')}>
-            Transit
-          </button>
+          <FlatButton
+            label="Bike"
+            onClick={this.handleClick.bind(this, 'BICYCLING')}
+            primary={true}
+          />
+          <FlatButton
+            label="Car Share"
+            onClick={this.handleClick.bind(this, 'DRIVING')}
+            primary={true}
+          />
+          <FlatButton
+            label="Transit"
+            onClick={this.handleClick.bind(this, 'TRANSIT')}
+            primary={true}
+          />
         </div>
       </div>
     );
