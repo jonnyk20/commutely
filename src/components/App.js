@@ -1,6 +1,9 @@
 /* global google, firebase */
 import React, { Component } from 'react';
 import moment from 'moment';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import { styles, palette } from '../styles/Theme';
 import ModoStore from '../Stores/ModoStore';
 import GoogleDirectionStore from '../Stores/GoogleDirectionStore';
 import MapWithSearchAndDirections from './Map/MapWithSearchAndDirections';
@@ -9,6 +12,14 @@ import SelectedStep from './Directions/SelectedStep';
 import ModoButton from './ModoButton';
 import ModoPopup from './ModoPopup';
 import NotificationResource from '../Resources/NotificationsResource';
+
+const muiTheme = getMuiTheme({
+  fontFamily: 'Proxima Nova Light, sans-serif',
+  chip: styles.chip,
+  floatingActionButton: styles.floatingActionButton,
+  paper: styles.paper,
+  card: styles.card
+});
 
 class App extends Component {
   state = {
@@ -140,44 +151,43 @@ class App extends Component {
   render() {
     const { currentLocation, directions } = this.state;
     return (
-      <div className="App">
-        <div> Hey </div>
-        {(() => {
-          if (currentLocation && currentLocation.lat) {
-            return (
-              <div>
-                <MapWithSearchAndDirections
-                  currentLocation={this.state.currentLocation}
-                  setDirections={this.setDirections}
-                  path={this.state.path}
-                  steps={this.state.steps}
-                  selectStep={this.selectStep}
-                  cars={this.state.cars}
-                  selectModo={this.selectModo}
-                />
-                {directions &&
-                  directions.routes && (
+      <MuiThemeProvider muiTheme={muiTheme}>
+        <div className="App">
+          <div> Hey </div>
+          {(() => {
+            if (currentLocation && currentLocation.lat) {
+              return (
+                <div>
+                  <MapWithSearchAndDirections
+                    currentLocation={this.state.currentLocation}
+                    setDirections={this.setDirections}
+                    path={this.state.path}
+                    steps={this.state.steps}
+                    selectStep={this.selectStep}
+                    cars={this.state.cars}
+                    selectModo={this.selectModo}
+                  />
+                  {directions &&
+                    directions.routes &&
                     <Directions
                       selectStep={this.selectStep}
                       directions={this.state.directions}
                       steps={this.state.steps}
-                    />
-                  )}
-                {this.state.steps && (
-                  <SelectedStep
-                    step={this.state.steps.find(step => step.selected)}
-                    searchNewDirections={this.searchNewDirections}
-                  />
-                )}
-                {this.state.modoPopup && (
-                  <ModoPopup selectedCar={this.state.selectedCar} />
-                )}
-              </div>
-            );
-          }
-          return <div>Loading...</div>;
-        })()}
-      </div>
+                    />}
+                  {this.state.steps &&
+                    <SelectedStep
+                      step={this.state.steps.find(step => step.selected)}
+                      searchNewDirections={this.searchNewDirections}
+                    />}
+                  {this.state.modoPopup &&
+                    <ModoPopup selectedCar={this.state.selectedCar} />}
+                </div>
+              );
+            }
+            return <div>Loading...</div>;
+          })()}
+        </div>
+      </MuiThemeProvider>
     );
   }
 }
