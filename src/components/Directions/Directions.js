@@ -87,7 +87,7 @@ class Directions extends Component {
                 <div
                   key={`icon-${i}`}
                   onClick={() => {
-                    if (mode !== 'WALKING') {
+                    if (mode !== 'WALKING' && !step.new) {
                       this.props.selectStep(step.id);
                     }
                   }}>
@@ -103,7 +103,9 @@ class Directions extends Component {
                     icon={this.getModeIcon(mode)}
                     label={`${humanizeMode} ${distance} (${duration})`}
                     onClick={() => {
-                      this.props.selectStep(step.id);
+                      if (!step.new) {
+                        this.props.selectStep(step.id);
+                      }
                     }}
                   />
                 </div>

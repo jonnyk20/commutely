@@ -176,7 +176,9 @@ const MapWithASearch = compose(
                 strokeWeight: 5
               }}
               onClick={() => {
-                props.selectStep(step.id);
+                if (!step.new) {
+                  props.selectStep(step.id);
+                }
               }}
             />
           );
