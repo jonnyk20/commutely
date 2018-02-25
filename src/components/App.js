@@ -1,4 +1,4 @@
-/* global google */
+/* global google, firebase */
 import React, { Component } from 'react';
 
 import ModoStore from '../Stores/ModoStore';
@@ -6,6 +6,8 @@ import GoogleDirectionStore from '../Stores/GoogleDirectionStore';
 import MapWithSearchAndDirections from './Map/MapWithSearchAndDirections';
 import Directions from './Directions/Directions';
 import SelectedStep from './Directions/SelectedStep';
+
+import NotificationResource from '../Resources/NotificationsResource';
 
 class App extends Component {
   state = {
@@ -26,6 +28,9 @@ class App extends Component {
         this.handleLoadNearby();
       });
     }
+    // experimental firebase stuff
+    this.notifications = new NotificationResource(firebase.messaging(), firebase.database());
+    //this.notifications.notify('hey');
   }
 
   selectStep = stepId => {

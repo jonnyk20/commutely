@@ -30,7 +30,22 @@
     You need to enable JavaScript to run this app.
   </noscript>
   <div id="root"></div>
-  <script src="secrets.js"></script>
+  <script src="/secrets.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
+  <script>
+    // Initialize Firebase
+    var config = {
+      apiKey: "AIzaSyDtKkUh0RvMchKZnDJI14bh74kYBTv2JTc",
+      authDomain: "commutely-dbfb8.firebaseapp.com",
+      databaseURL: "https://commutely-dbfb8.firebaseio.com",
+      projectId: "commutely-dbfb8",
+      storageBucket: "commutely-dbfb8.appspot.com",
+      messagingSenderId: "165490778450"
+    };
+    window.firebase = firebase;
+    firebase.initializeApp(config);
+    console.log('firebase initiated')
+  </script>
 </body>
 
 </html>
