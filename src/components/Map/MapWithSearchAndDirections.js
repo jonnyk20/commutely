@@ -137,8 +137,8 @@ const MapWithASearch = compose(
               path: google.maps.SymbolPath.CIRCLE,
               scale: 10
             }}
-            onClick={() => {
-              props.selectModo(car);
+            onClick={e => {
+              props.selectModo(e.xa.target, car);
             }}
           />
         );
