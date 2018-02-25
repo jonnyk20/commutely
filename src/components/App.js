@@ -172,7 +172,6 @@ class App extends Component {
                 {this.state.modoPopup && (
                   <ModoPopup selectedCar={this.state.selectedCar} />
                 )}
-                {/* {this.state.cars && <ModoButton carId={this.state.cars[0]} />} */}
               </div>
             );
           }
