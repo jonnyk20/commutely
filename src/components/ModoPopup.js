@@ -8,7 +8,6 @@ class ModoPopup extends Component {
       <div>
         <div>{`Category: ${selectedCar.category}`}</div>
         <div>{`Model: ${selectedCar.model}`}</div>
-
       </div>
     )
   }
