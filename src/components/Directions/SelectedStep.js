@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import FlatButton from 'material-ui/FlatButton';
+import Paper from 'material-ui/Paper';
 
 class SelectedStep extends Component {
   handleClick(mode) {
@@ -11,7 +12,7 @@ class SelectedStep extends Component {
 
   render() {
     return (
-      <div>
+      <Paper style={styles.paperStyle}>
         <div> Select Method </div>
         <div>
           <FlatButton
@@ -30,9 +31,18 @@ class SelectedStep extends Component {
             primary={true}
           />
         </div>
-      </div>
+      </Paper>
     );
   }
 }
+
+const styles = {
+  paperStyle: {
+    margin: '0px 15%',
+    marginTop: '15px',
+    padding: '15px',
+    textAlign: 'center'
+  }
+};
 
 export default SelectedStep;

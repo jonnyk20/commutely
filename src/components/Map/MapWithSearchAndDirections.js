@@ -25,7 +25,7 @@ let destination;
 const MapWithASearch = compose(
   withProps({
     loadingElement: <div style={{ height: `100%` }} />,
-    containerElement: <div style={{ height: `300px` }} />,
+    containerElement: <div style={{ height: `400px` }} />,
     mapElement: <div style={{ height: `100%` }} />
   }),
   lifecycle({
@@ -110,14 +110,15 @@ const MapWithASearch = compose(
         onPlacesChanged={props.onPlacesChanged}
         ref={props.onSearchBoxMounted}>
         <input
-          placeholder="Customized your placeholder"
+          placeholder="Search for Location"
           style={{
             boxSizing: `border-box`,
             border: `1px solid transparent`,
             width: `240px`,
             height: `32px`,
-            marginTop: `27px`,
-            padding: `0 12px`,
+            marginTop: `50px`,
+            marginLeft: `-105px`,
+            padding: `0 5px`,
             borderRadius: `3px`,
             boxShadow: `0 2px 6px rgba(0, 0, 0, 0.3)`,
             fontSize: `14px`,

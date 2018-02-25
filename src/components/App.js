@@ -156,8 +156,8 @@ class App extends Component {
           });
           this.state.refs.map.fitBounds(bounds);
 
+          this.setState({ cars: [] });
           if (mode === 'DRIVING') {
-            this.setState({ cars: [] });
             if (this.state.currentLocation) {
               this.findCarLocation(
                 this.state.currentLocation.lat,
@@ -218,6 +218,12 @@ class App extends Component {
                     setDestination={this.setDestination}
                     setRefs={this.setRefs}
                   />
+                  {this.state.steps && (
+                    <SelectedStep
+                      step={this.state.steps.find(step => step.selected)}
+                      searchNewDirections={this.searchNewDirections}
+                    />
+                  )}
                   {directions &&
                     directions.routes && (
                       <Directions
@@ -226,12 +232,6 @@ class App extends Component {
                         steps={this.state.steps}
                       />
                     )}
-                  {this.state.steps && (
-                    <SelectedStep
-                      step={this.state.steps.find(step => step.selected)}
-                      searchNewDirections={this.searchNewDirections}
-                    />
-                  )}
                   {this.state.modoPopup && (
                     <Popover
                       open={this.state.modoPopup}
