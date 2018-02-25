@@ -39,6 +39,10 @@ class App extends Component {
     });
   };
 
+  replaceDirections = (oldStep, newSteps) => {
+    console.log('new steps being replaced')
+  }
+
   setDirections = directions => {
     console.log('Settign directions in app');
     let stepId = 1;
