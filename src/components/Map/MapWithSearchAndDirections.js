@@ -85,9 +85,14 @@ const MapWithASearch = compose(
               if (status === google.maps.DirectionsStatus.OK) {
                 console.log('Status OK')
                 this.props.setDirections(result);
+                result.routes[0].legs[0].steps.forEach(step => {
+                  console.log('step', step)
+                  bounds.extend(step.start_location)
+                });
               } else {
                 console.error(`error fetching directions ${result}`);
               }
+              refs.map.fitBounds(bounds);
             }
           );
         }
