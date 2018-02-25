@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import GoogleDirectionStore from 'Stores/GoogleDirectionStore';
+import GoogleDirectionStore from '../../Stores/GoogleDirectionStore';
 
 class Directions extends Component {
   render() {
