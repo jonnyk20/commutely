@@ -77,6 +77,8 @@ class App extends Component {
       this.state.currentLocation.lng
     ).then(() => {
       ModoStore.findCarsFromLocation().then(res => {
+        console.log('rest from cars')
+        console.log(res)
         this.setState({ cars: res });
         console.log('Cars', this.state.cars);
       });

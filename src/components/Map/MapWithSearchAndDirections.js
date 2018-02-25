@@ -14,6 +14,9 @@ import {
 import { SearchBox } from 'react-google-maps/lib/components/places/SearchBox';
 
 import GoogleDirectionStore from '../../Stores/GoogleDirectionStore'
+import mapStyle from './mapStyle.json';
+
+console.log('style!!!!', mapStyle)
 
 let home;
 const testLocation = { lat: 49.23124000000001, lng: -123.00459539999997 };
@@ -66,7 +69,6 @@ const MapWithASearch = compose(
             this.state.center
           );
           destination = nextMarkers[0];
-          console.log('destination', destination);
           this.setState({
             center: nextCenter,
             markers: [this.state.markers[0], nextMarkers[0]]
@@ -78,7 +80,6 @@ const MapWithASearch = compose(
             destination.position
           )
             .then(res => {
-              console.log('res: ', res);
               this.props.setDirections(res);
               res.routes[0].legs[0].steps.forEach(step => {
                 bounds.extend(step.start_location);
@@ -100,7 +101,9 @@ const MapWithASearch = compose(
       center={props.currentLocation}
       defaultZoom={15}
       onBoundsChanged={props.onBoundsChanged}
-      ref={props.onMapMounted}>
+      ref={props.onMapMounted}
+      defaultOptions={{ styles: mapStyle }}>
+
       <SearchBox
         bounds={props.bounds}
         controlPosition={google.maps.ControlPosition.TOP_LEFT}
@@ -129,7 +132,6 @@ const MapWithASearch = compose(
       )}
       {props.steps &&
         props.steps.map(step => {
-          console.log()
           let color = 'blue';
           switch (step.travel_mode) {
             case ('WALKING'):
