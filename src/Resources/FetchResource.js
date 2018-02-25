@@ -4,12 +4,16 @@ export default class FetchResource {
       fetch(`https://bookit.modo.coop/api/v2/${query}`, { method: 'GET' })
         .then(response => {
           response.json().then(data => {
-            resolve(data);
+            if (data.Status === 'Success') {
+              resolve(data);
+            }
           });
         })
         .catch(response => {
           response.json().then(data => {
-            reject(data.errors);
+            if (data.Status === 'Failure') {
+              reject(data.errors);
+            }
           });
         });
     });

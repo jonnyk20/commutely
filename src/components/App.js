@@ -23,7 +23,6 @@ class App extends Component {
           lng: coords.longitude
         };
         this.setState({ currentLocation: position });
-        this.handleLoadNearby();
       });
     }
   }
@@ -80,28 +79,27 @@ class App extends Component {
     ).then(() => {
       ModoStore.findCarsFromLocation().then(res => {
         this.setState({ cars: res });
-        console.log(this.state.cars);
       });
     });
   }
 
-  searchNewDirections = (step) => {
+  searchNewDirections = step => {
     console.log('searchingfornewdirections');
     console.log(step);
     // GoogleDirectionStore.
-  }
+  };
 
   render() {
-    console.log('rendering app')
+    console.log('rendering app');
     const { currentLocation, directions } = this.state;
     return (
       <div className="App">
         <div> Hey </div>
         {(() => {
-          console.log('here')
-          console.log(currentLocation)
+          console.log('here');
+          console.log(currentLocation);
           if (currentLocation && currentLocation.lat) {
-            console.log('here again')
+            console.log('here again');
             return (
               <div>
                 <MapWithSearchAndDirections
@@ -112,12 +110,15 @@ class App extends Component {
                   selectStep={this.selectStep}
                 />
                 {directions &&
-                  directions.routes &&
-                  <Directions directions={this.state.directions} />}
-                {this.state.steps && <SelectedStep
-                  step={this.state.steps.find(step => step.selected)}
-                  searchNewDirections={this.searchNewDirections}
-                />}
+                  directions.routes && (
+                    <Directions directions={this.state.directions} />
+                  )}
+                {this.state.steps && (
+                  <SelectedStep
+                    step={this.state.steps.find(step => step.selected)}
+                    searchNewDirections={this.searchNewDirections}
+                  />
+                )}
               </div>
             );
           }
