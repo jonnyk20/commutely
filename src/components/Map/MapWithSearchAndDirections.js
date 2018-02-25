@@ -130,16 +130,25 @@ const MapWithASearch = compose(
       {props.steps &&
         props.steps.map(step => {
           console.log()
-          let color = "green";
-          switch (true) {
-            case (step.new):
-              color = "blue"
+          let color = 'blue';
+          switch (step.travel_mode) {
+            case ('WALKING'):
+              color = 'gray'
               break;
-            case (step.selected === true):
-              color = "red";
+            case ('WALKING'):
+              color = 'yellow';
+              break;
+            case ('DRIVING'):
+              color = 'black';
+              break;
+            case ('BICYCLING'):
+              color = 'orange';
               break;
             default:
               break;
+          }
+          if (step.selected) {
+            color = 'green';
           }
           return (
             <Polyline
