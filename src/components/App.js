@@ -110,7 +110,8 @@ class App extends Component {
       },
       travel_mode: steps[0].travel_mode,
       instructions: `${humanizeMode} to ${routes.legs[0].end_address}`,
-      lat_lngs: lat_lngs
+      lat_lngs: lat_lngs,
+      new: true
     };
     return newDirection;
   };
