@@ -26,8 +26,8 @@ class App extends Component {
     });
   };
 
-  setDirections = (directions) => {
-    console.log('Settign directions in app')
+  setDirections = directions => {
+    console.log('Settign directions in app');
     let stepId = 1;
     this.setState({
       directions: directions
@@ -41,7 +41,7 @@ class App extends Component {
       steps.push(step);
       stepId = stepId + 1;
     });
-    console.log('setting State with steps')
+    console.log('setting State with steps');
     this.setState({
       steps: steps,
       directions: directions
