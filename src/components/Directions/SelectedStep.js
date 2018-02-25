@@ -6,12 +6,11 @@ class SelectedStep extends Component {
   };
 
   render() {
-    console.log('props', this.props)
     return (
       <div>
         <div> Selected Selected </div>
         <div>
-          <button onClick={this.handleClick} > Bike </button>
+          <button onClick={this.handleClick}> Bike </button>
         </div>
       </div>
     )
