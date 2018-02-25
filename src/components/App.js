@@ -23,6 +23,7 @@ class App extends Component {
           lng: coords.longitude
         };
         this.setState({ currentLocation: position });
+        this.handleLoadNearby();
       });
     }
   }
@@ -77,21 +78,6 @@ class App extends Component {
       directions: directions
     });
   };
-  componentDidMount() {
-    if (navigator && navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(pos => {
-        const coords = pos.coords;
-        const position = {
-          lat: coords.latitude,
-          lng: coords.longitude
-        };
-        this.setState({ currentLocation: position });
-        this.handleLoadNearby();
-      });
-    }
-    // this.handleLoadCars();
-    // this.handleLoadAvailability();
-  }
 
   handleLoadNearby() {
     ModoStore.getNearby(
@@ -100,6 +86,7 @@ class App extends Component {
     ).then(() => {
       ModoStore.findCarsFromLocation().then(res => {
         this.setState({ cars: res });
+        console.log('Cars', this.state.cars);
       });
     });
   }
