@@ -1,6 +1,6 @@
 /* global google, firebase */
 import React, { Component } from 'react';
-
+import moment from 'moment';
 import ModoStore from '../Stores/ModoStore';
 import GoogleDirectionStore from '../Stores/GoogleDirectionStore';
 import MapWithSearchAndDirections from './Map/MapWithSearchAndDirections';
@@ -29,7 +29,10 @@ class App extends Component {
       });
     }
     // experimental firebase stuff
-    this.notifications = new NotificationResource(firebase.messaging(), firebase.database());
+    this.notifications = new NotificationResource(
+      firebase.messaging(),
+      firebase.database()
+    );
     //this.notifications.notify('hey');
   }
 
@@ -45,18 +48,49 @@ class App extends Component {
     });
   };
 
-  replaceDirections = (oldStep, newSteps) => {
+  calculateNewStep = (steps, routes) => {
+    console.log(routes);
+    let duration = 0;
+    let distance = 0;
+    const lat_lngs = [];
+    for (let i = 0; i < steps.length; i++) {
+      duration += steps[i].duration.value;
+      distance += steps[i].distance.value;
+      // path = [...path, ...steps[i].lat_lngs];
+      steps[i].lat_lngs.forEach(segment => {
+        lat_lngs.push(new google.maps.LatLng(segment.lat(), segment.lng()));
+      });
+    }
+    const lastStep = steps[steps.length - 1];
+    const mode = steps[0].travel_mode.toLowerCase();
+    const humanizeMode = mode.slice(0, 1).toUpperCase() + mode.slice(1);
+    let newDirection = {
+      duration: {
+        text: moment.duration(duration, 'seconds').humanize()
+      },
+      distance: {
+        text: `${(distance / 1000).toFixed(2)} km`
+      },
+      mode: steps[0].travel_mode,
+      instructions: `${humanizeMode} to ${routes.legs[0].end_address}`,
+      lat_lngs: lat_lngs
+    };
+    return newDirection;
+  };
+
+  replaceDirections = (oldStep, newSteps, newRoutes) => {
     newSteps.forEach(step => (step.new = true));
+    const calculatedNewSteps = this.calculateNewStep(newSteps, newRoutes);
     const newStepsArray = [...this.state.steps];
     newStepsArray.splice(
       this.state.steps.findIndex(step => step.id === oldStep.id),
       1,
-      ...newSteps
+      calculatedNewSteps
     );
+    console.log('setting update steps', newStepsArray);
     this.setState({
       steps: newStepsArray
     });
-    console.log('step: ', this.state.steps);
   };
 
   setDirections = directions => {
@@ -82,8 +116,8 @@ class App extends Component {
       this.state.currentLocation.lng
     ).then(() => {
       ModoStore.findCarsFromLocation().then(res => {
-        console.log('rest from cars')
-        console.log(res)
+        console.log('rest from cars');
+        console.log(res);
         this.setState({ cars: res });
         console.log('Cars', this.state.cars);
       });
@@ -95,7 +129,7 @@ class App extends Component {
     const destination = step.end_location;
     GoogleDirectionStore.mode = mode;
     GoogleDirectionStore.getDirections(origin, destination).then(res => {
-      this.replaceDirections(step, res.routes[0].legs[0].steps);
+      this.replaceDirections(step, res.routes[0].legs[0].steps, res.routes[0]);
     });
   };
 
