@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 
 import ModoStore from '../Stores/ModoStore';
+import GoogleDirectionStore from '../Stores/GoogleDirectionStore';
 import MapWithSearchAndDirections from './Map/MapWithSearchAndDirections';
 import Directions from './Directions/Directions';
 
@@ -87,6 +88,10 @@ class App extends Component {
         //console.log(this.state.availability);
       }
     });
+  }
+
+  getNewDirections = () => {
+
   }
 
   render() {
