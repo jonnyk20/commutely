@@ -1,14 +1,31 @@
 import React, { Component } from 'react';
 
 class Directions extends Component {
-  componentWillUpdate() {
-    console.log('component will update');
-    console.log('directions', this.props.directions)
-  }
   render() {
+    const { directions } = this.props;
+    const leg = directions.routes[0].legs[0];
     return (
       <div className="Directions">
         <div> Directions go Here </div>
+        <div>{`start address: ${leg.start_address}`}</div>
+        <div>{`end address: ${leg.end_address}`}</div>
+        <div>{`departrue time: ${leg.departure_time.text}`}</div>
+        <div>{`arrival time: ${leg.arrival_time.text}`}</div>
+        <div>{`duration: ${leg.duration.text}`}</div>
+        <div>{`distance: ${leg.distance.text}`}</div>
+        {leg.steps.map((step, i) => {
+          console.log('step: ', step);
+          const distance = step.distance.text;
+          const duration = step.duration.text;
+          const instruction = step.instructions;
+          const mode = step.travel_mode;
+          return (
+            <div
+              key={
+                i
+              }>{`steps: ${mode} ${distance} (${duration}) - ${instruction} `}</div>
+          );
+        })}
       </div>
     );
   }

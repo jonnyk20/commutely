@@ -1,6 +1,8 @@
+/* global google */
 import React, { Component } from 'react';
 
 import ModoStore from '../Stores/ModoStore';
+import GoogleDirectionStore from '../Stores/GoogleDirectionStore';
 import MapWithSearchAndDirections from './Map/MapWithSearchAndDirections';
 import Directions from './Directions/Directions';
 
@@ -14,14 +16,38 @@ class App extends Component {
     available: {}
   };
 
-  setDirections = directions => {
-    console.log('settind directions in app');
-    console.log(directions);
+  selectStep = stepId => {
+    const newSteps = this.state.steps.map(step => {
+      step.selected = step.id === stepId ? true : false;
+      return step;
+    });
+
     this.setState({
-      directions: directions
+      steps: newSteps
     });
   };
 
+  setDirections = directions => {
+    console.log('Settign directions in app');
+    let stepId = 1;
+    this.setState({
+      directions: directions
+    });
+    var points = [];
+    var myRoute = directions.routes[0].legs[0];
+    const steps = [];
+    myRoute.steps.forEach(step => {
+      step.id = stepId;
+      step.selected = false;
+      steps.push(step);
+      stepId = stepId + 1;
+    });
+    console.log('setting State with steps');
+    this.setState({
+      steps: steps,
+      directions: directions
+    });
+  };
   componentDidMount() {
     if (navigator && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(pos => {
@@ -34,6 +60,21 @@ class App extends Component {
         this.handleLoadNearby();
       });
     }
+
+    this.handleLoadNearby();
+    console.log('using google store');
+    GoogleDirectionStore.getDirections(
+      { lat: 49.2035681, lng: -122.9126894 },
+      { lat: 49.2348813, lng: -123.02525550000001 }
+    )
+      .then(data => {
+        console.log('call successful');
+        console.log(data);
+      })
+      .catch(error => {
+        console.log('fail');
+        console.log(error);
+      });
   }
 
   handleLoadNearby() {
@@ -44,22 +85,16 @@ class App extends Component {
       if (ModoStore.isLoading === false) {
         this.setState({ nearby: ModoStore.nearby });
         ModoStore.findCarsFromLocation();
-        console.log('Cars:', ModoStore.nearbyCars);
       }
     });
   }
 
-  // handleLoadLocations() {
-  //   ModoStore.getLocations().then(() => {
-  //     if (ModoStore.isLoading === false) {
-  //       this.setState({ locations: ModoStore.locations });
-  //       console.log('Locations:', ModoStore.locations);
-  //     }
-  //   });
+  // getNewDirections = () => {
+  //
   // }
 
   render() {
-    const { currentLocation } = this.state;
+    const { currentLocation, directions } = this.state;
     return (
       <div className="App">
         <div> Hey </div>
@@ -70,8 +105,14 @@ class App extends Component {
                 <MapWithSearchAndDirections
                   currentLocation={this.state.currentLocation}
                   setDirections={this.setDirections}
+                  path={this.state.path}
+                  steps={this.state.steps}
+                  selectStep={this.selectStep}
                 />
-                <Directions directions={this.state.directions} />
+                {directions &&
+                  directions.routes && (
+                    <Directions directions={this.state.directions} />
+                  )}
               </div>
             );
           }
