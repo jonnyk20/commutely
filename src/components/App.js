@@ -89,10 +89,12 @@ class App extends Component {
     const humanizeMode = mode.slice(0, 1).toUpperCase() + mode.slice(1);
     let newDirection = {
       duration: {
-        text: moment.duration(duration, 'seconds').humanize()
+        text: moment.duration(duration, 'seconds').humanize(),
+        value: duration
       },
       distance: {
-        text: `${(distance / 1000).toFixed(2)} km`
+        text: `${(distance / 1000).toFixed(2)} km`,
+        value: distance
       },
       travel_mode: steps[0].travel_mode,
       instructions: `${humanizeMode} to ${routes.legs[0].end_address}`,
