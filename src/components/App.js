@@ -23,7 +23,6 @@ class App extends Component {
           lng: coords.longitude
         };
         this.setState({ currentLocation: position });
-        this.handleLoadNearby();
       });
     }
   }
@@ -40,13 +39,17 @@ class App extends Component {
   };
 
   replaceDirections = (oldStep, newSteps) => {
-    newSteps.forEach(step => step.new = true);
+    newSteps.forEach(step => (step.new = true));
     const newStepsArray = [...this.state.steps];
-    newStepsArray.splice(this.state.steps.findIndex(step => step.id === oldStep.id), 1, ...newSteps)
+    newStepsArray.splice(
+      this.state.steps.findIndex(step => step.id === oldStep.id),
+      1,
+      ...newSteps
+    );
     this.setState({
       steps: newStepsArray
-    })
-  }
+    });
+  };
 
   setDirections = directions => {
     let stepId = 1;
@@ -87,22 +90,16 @@ class App extends Component {
     ).then(() => {
       ModoStore.findCarsFromLocation().then(res => {
         this.setState({ cars: res });
-        console.log(this.state.cars);
       });
     });
   }
 
-  searchNewDirections = step => {
-    console.log(step);
+  searchNewDirections = (step, mode) => {
     const origin = step.start_location;
     const destination = step.end_location;
-    // GoogleDirectionStore.
-    GoogleDirectionStore.mode = 'BICYCLING';
+    GoogleDirectionStore.mode = mode;
     GoogleDirectionStore.getDirections(origin, destination).then(res => {
       this.replaceDirections(step, res.routes[0].legs[0].steps);
-      // res.routes[0].legs[0].steps.forEach(step => {
-      //   bounds.extend(step.start_location);
-      // });
     });
   };
 
@@ -112,7 +109,6 @@ class App extends Component {
       <div className="App">
         <div> Hey </div>
         {(() => {
-          console.log(currentLocation);
           if (currentLocation && currentLocation.lat) {
             return (
               <div>

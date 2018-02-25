@@ -4,7 +4,8 @@ import GoogleDirectionStore from 'Stores/GoogleDirectionStore';
 
 class Directions extends Component {
   render() {
-    const { directions } = this.props;
+    const { directions, steps } = this.props;
+    console.log('steps: ', steps);
     const leg = directions.routes[0].legs[0];
     return (
       <div className="Directions">
