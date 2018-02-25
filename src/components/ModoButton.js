@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import FlatButton from 'material-ui/FlatButton';
 import moment from 'moment';
 
 class ModoButton extends Component {
@@ -17,7 +18,12 @@ class ModoButton extends Component {
     const { car } = this.props;
     return (
       <div>
-        <button onClick={this.handleClick.bind(this)}>Book with Modo</button>
+        <FlatButton
+          label="Book With Modo"
+          onClick={this.handleClick.bind(this)}
+          fullWidth={true}
+          primary={true}
+        />
       </div>
     );
   }
