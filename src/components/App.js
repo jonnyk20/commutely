@@ -6,6 +6,7 @@ import GoogleDirectionStore from '../Stores/GoogleDirectionStore';
 import MapWithSearchAndDirections from './Map/MapWithSearchAndDirections';
 import Directions from './Directions/Directions';
 import SelectedStep from './Directions/SelectedStep';
+import ModoButton from './ModoButton';
 
 import NotificationResource from '../Resources/NotificationsResource';
 
@@ -13,7 +14,7 @@ class App extends Component {
   state = {
     currentLocation: {},
     directions: {},
-    cars: {}
+    cars: []
   };
 
   componentDidMount() {
@@ -25,7 +26,16 @@ class App extends Component {
           lng: coords.longitude
         };
         this.setState({ currentLocation: position });
-        this.handleLoadNearby();
+
+        ModoStore.getNearby(
+          this.state.currentLocation.lat,
+          this.state.currentLocation.lng
+        ).then(() => {
+          ModoStore.findCarsFromLocation().then(() => {
+            this.setState({ cars: ModoStore.blankArray });
+            console.log(this.state.cars);
+          });
+        });
       });
     }
     // experimental firebase stuff
@@ -110,20 +120,6 @@ class App extends Component {
     });
   };
 
-  handleLoadNearby() {
-    ModoStore.getNearby(
-      this.state.currentLocation.lat,
-      this.state.currentLocation.lng
-    ).then(() => {
-      ModoStore.findCarsFromLocation().then(res => {
-        console.log('rest from cars');
-        console.log(res);
-        this.setState({ cars: res });
-        console.log('Cars', this.state.cars);
-      });
-    });
-  }
-
   searchNewDirections = (step, mode) => {
     const origin = step.start_location;
     const destination = step.end_location;
@@ -161,6 +157,7 @@ class App extends Component {
                     step={this.state.steps.find(step => step.selected)}
                     searchNewDirections={this.searchNewDirections}
                   />}
+                {/* {this.state.cars && <ModoButton carId={this.state.cars[0]} />} */}
               </div>
             );
           }

@@ -2,18 +2,16 @@ import FetchResource from '../Resources/FetchResource';
 
 class ModoStore {
   nearby = [];
-  nearbyCars = [];
   locations = [];
+  blankArray = [];
   isLoading = true;
 
   getNearby(lat, lng) {
     return new Promise(resolve => {
-      this.isLoading = true;
       FetchResource.callModo(`nearby?lat=${lat}&long=${lng}`)
         .then(res => {
           this.nearby = res.Response;
-          this.isLoading = false;
-          resolve(res);
+          resolve();
         })
         .catch(err => {
           console.log(err);
@@ -23,10 +21,8 @@ class ModoStore {
 
   getCars() {
     return new Promise(resolve => {
-      this.isLoading = true;
       FetchResource.callModo('car_list')
         .then(res => {
-          this.isLoading = false;
           this.getLocations().then(() => {
             resolve(res.Response['Cars']);
           });
@@ -39,11 +35,9 @@ class ModoStore {
 
   getLocations() {
     return new Promise(resolve => {
-      this.isLoading = true;
       FetchResource.callModo('location_list')
         .then(res => {
           this.locations = res.Response['Locations'];
-          this.isLoading = false;
           resolve();
         })
         .catch(err => {
@@ -64,30 +58,33 @@ class ModoStore {
     });
   }
 
-  findLocationAndAvailability = id => {
+  findLocationAndAvailability(id) {
     return new Promise(resolve => {
       const locations = this.locations;
       let result = false;
 
-      this.getAvailability(id).then(() => {
-        for (let key in locations) {
-          if (locations[key]['ID'] === id) {
-            result = {
-              lat: locations[key]['Latitude'],
-              lng: locations[key]['Longitude'],
-              id: id
-            };
-            break;
+      this.getAvailability(id)
+        .then(() => {
+          for (let key in locations) {
+            if (locations[key]['ID'] === id) {
+              result = {
+                lat: locations[key]['Latitude'],
+                lng: locations[key]['Longitude']
+              };
+              break;
+            }
           }
-        }
-        resolve(result);
-      });
-      return false;
+          resolve(result);
+        })
+        .catch(() => {
+          return false;
+        });
     });
-  };
+  }
 
   findCarsFromLocation = () => {
     return new Promise(resolve => {
+      let carArray = [];
       if (this.nearby['Locations'].length > 0) {
         this.getCars().then(cars => {
           if (cars instanceof Object) {
@@ -113,16 +110,18 @@ class ModoStore {
                         lat: res.lat,
                         lng: res.lng
                       };
-                      this.nearbyCars.push(obj);
+                      this.blankArray.push(obj);
                     }
                   });
                 }
               });
             });
+            setTimeout(function() {
+              resolve();
+            }, 2500);
           }
         });
       }
-      resolve(this.nearbyCars);
     });
   };
 }
