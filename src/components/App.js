@@ -6,12 +6,13 @@ import GoogleDirectionStore from '../Stores/GoogleDirectionStore';
 import MapWithSearchAndDirections from './Map/MapWithSearchAndDirections';
 import Directions from './Directions/Directions';
 import SelectedStep from './Directions/SelectedStep';
+import ModoButton from './ModoButton';
 
 class App extends Component {
   state = {
     currentLocation: {},
     directions: {},
-    cars: {}
+    cars: []
   };
 
   componentDidMount() {
@@ -23,7 +24,16 @@ class App extends Component {
           lng: coords.longitude
         };
         this.setState({ currentLocation: position });
-        this.handleLoadNearby();
+
+        ModoStore.getNearby(
+          this.state.currentLocation.lat,
+          this.state.currentLocation.lng
+        ).then(() => {
+          ModoStore.findCarsFromLocation().then(() => {
+            this.setState({ cars: ModoStore.blankArray });
+            console.log(this.state.cars);
+          });
+        });
       });
     }
   }
@@ -69,18 +79,6 @@ class App extends Component {
     });
   };
 
-  handleLoadNearby() {
-    ModoStore.getNearby(
-      this.state.currentLocation.lat,
-      this.state.currentLocation.lng
-    ).then(() => {
-      ModoStore.findCarsFromLocation().then(res => {
-        this.setState({ cars: res });
-        console.log('Cars', this.state.cars);
-      });
-    });
-  }
-
   searchNewDirections = (step, mode) => {
     const origin = step.start_location;
     const destination = step.end_location;
@@ -107,13 +105,16 @@ class App extends Component {
                   selectStep={this.selectStep}
                 />
                 {directions &&
-                  directions.routes &&
-                  <Directions directions={this.state.directions} />}
-                {this.state.steps &&
+                  directions.routes && (
+                    <Directions directions={this.state.directions} />
+                  )}
+                {this.state.steps && (
                   <SelectedStep
                     step={this.state.steps.find(step => step.selected)}
                     searchNewDirections={this.searchNewDirections}
-                  />}
+                  />
+                )}
+                {/* {this.state.cars && <ModoButton carId={this.state.cars[0]} />} */}
               </div>
             );
           }
