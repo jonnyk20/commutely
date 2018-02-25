@@ -3,9 +3,49 @@ import moment from 'moment';
 import GoogleDirectionStore from 'Stores/GoogleDirectionStore';
 import styled from 'styled-components';
 import Paper from 'material-ui/Paper';
+import MapsDirectionsWalk from 'material-ui/svg-icons/maps/directions-walk';
+import ImageAdjust from 'material-ui/svg-icons/image/adjust';
+import MapsDirectionsTransit from 'material-ui/svg-icons/maps/directions-transit';
+import MapsDirectionsBike from 'material-ui/svg-icons/maps/directions-bike';
+import NotificationDriveEta from 'material-ui/svg-icons/notification/drive-eta';
+import MapsPlace from 'material-ui/svg-icons/maps/place';
+import RaisedButton from 'material-ui/RaisedButton';
 import Step from './Step';
 
 class Directions extends Component {
+  getModeIcon(mode) {
+    switch (mode) {
+      case 'TRANSIT':
+        return <MapsDirectionsTransit />;
+      case 'WALKING':
+        return <MapsDirectionsWalk />;
+      case 'BICYCLING':
+        return <MapsDirectionsBike />;
+      case 'DRIVING':
+        return <NotificationDriveEta />;
+      default:
+        return null;
+    }
+  }
+
+  getBackgroundColor(mode) {
+    switch (mode) {
+      case 'TRANSIT':
+        return '#66CCFF';
+      case 'BICYCLING':
+        return '#FDD675';
+      case 'DRIVING':
+        return '#66CC99';
+      default:
+        return null;
+    }
+  }
+
+  capitalize(name) {
+    const newNmae = name.toLowerCase();
+    if (newNmae) return newNmae.slice(0, 1).toUpperCase() + newNmae.slice(1);
+  }
+
   render() {
     const { directions, steps } = this.props;
     const leg = directions.routes[0].legs[0];
@@ -15,17 +55,63 @@ class Directions extends Component {
       duration += steps[i].duration.value;
       distance += steps[i].distance.value;
     }
+    const startAdd = leg.start_address;
+    const destinationAdd = leg.end_address;
     const departureTime = moment().format('LT');
     const arrivalTime = moment().add(duration, 's').format('LT');
     const durationTime = moment.duration(duration, 'seconds').humanize();
     return (
       <DirectionContainer className="Directions">
-        <Paper>
+        <Paper style={styles.paperStyle}>
+          <div>{`${departureTime} - ${arrivalTime}`}</div>
           <div>
             {durationTime}
           </div>
           <div>
-            {`(${(distance / 1000).toFixed(2)} km)`}
+            {`(${(distance / 1000).toFixed(2)} KM)`}
+          </div>
+          <TotalText>
+            <ImageAdjust /> {startAdd}
+          </TotalText>
+          <div>
+            {steps.map((step, i) => {
+              const distance = step.distance.text;
+              const duration = step.duration.text;
+              const instruction = step.instructions.replace(
+                /<\/?[^>]+(>|$)/g,
+                ''
+              );
+              const mode = step.travel_mode;
+              const humanizeMode = this.capitalize(mode);
+              return (
+                <div
+                  key={`icon-${i}`}
+                  onClick={() => {
+                    if (mode !== 'WALKING') {
+                      this.props.selectStep(step.id);
+                    }
+                  }}>
+                  <RaisedButton
+                    fullWidth
+                    disabledBackgroundColor={
+                      mode === 'WALKING' ? '#ffffff' : ''
+                    }
+                    overlayStyle={{ textAlign: 'left' }}
+                    disabledLabelColor={mode === 'WALKING' ? '#000000' : ''}
+                    backgroundColor={this.getBackgroundColor(mode)}
+                    disabled={mode === 'WALKING' ? true : false}
+                    icon={this.getModeIcon(mode)}
+                    label={`${humanizeMode} ${distance} (${duration})`}
+                    onClick={() => {
+                      this.props.selectStep(step.id);
+                    }}
+                  />
+                </div>
+              );
+            })}
+            <TotalText>
+              <MapsPlace /> {destinationAdd}
+            </TotalText>
           </div>
         </Paper>
       </DirectionContainer>
@@ -33,9 +119,20 @@ class Directions extends Component {
   }
 }
 
-const DirectionContainer = styled.div`
-  text-align: center;
-  margin-top: 30px;
+const styles = {
+  paperStyle: {
+    margin: '0px 15%',
+    padding: '15px',
+    textAlign: 'left'
+  }
+};
+
+const TotalText = styled.div`
+  margin-left: 12px;
+  height: 30px;
+  over-flow: hidden;
 `;
+
+const DirectionContainer = styled.div`margin-top: 30px;`;
 
 export default Directions;

@@ -30,19 +30,19 @@ class App extends Component {
     selectedCar: {},
     target: {}
   };
-  setRefs = (ref) => {
+  setRefs = ref => {
     console.log('setting Refs');
-    console.log('refs', ref)
+    console.log('refs', ref);
     this.setState({
       refs: { map: ref }
-    })
-  }
+    });
+  };
 
-  setDestination = (destination) => {
+  setDestination = destination => {
     this.setState({
       destination: destination
-    })
-  }
+    });
+  };
 
   componentDidMount() {
     if (navigator && navigator.geolocation) {
@@ -53,16 +53,6 @@ class App extends Component {
           lng: coords.longitude
         };
         this.setState({ currentLocation: position });
-
-        ModoStore.getNearby(
-          this.state.currentLocation.lat,
-          this.state.currentLocation.lng
-        ).then(() => {
-          ModoStore.findCarsFromLocation().then(() => {
-            this.setState({ cars: ModoStore.blankArray });
-            console.log(this.state.cars);
-          });
-        });
       });
     }
     // experimental firebase stuff
@@ -103,10 +93,12 @@ class App extends Component {
     const humanizeMode = mode.slice(0, 1).toUpperCase() + mode.slice(1);
     let newDirection = {
       duration: {
-        text: moment.duration(duration, 'seconds').humanize()
+        text: moment.duration(duration, 'seconds').humanize(),
+        value: duration
       },
       distance: {
-        text: `${(distance / 1000).toFixed(2)} km`
+        text: `${(distance / 1000).toFixed(2)} km`,
+        value: distance
       },
       travel_mode: steps[0].travel_mode,
       instructions: `${humanizeMode} to ${routes.legs[0].end_address}`,
@@ -163,6 +155,16 @@ class App extends Component {
             bounds.extend(step.start_location);
           });
           this.state.refs.map.fitBounds(bounds);
+
+          if (mode === 'DRIVING') {
+            this.setState({ cars: [] });
+            if (this.state.currentLocation) {
+              this.findCarLocation(
+                this.state.currentLocation.lat,
+                this.state.currentLocation.lng
+              );
+            }
+          }
         })
         .catch(err => {
           console.err(`err fetching directions ${err}`);
@@ -170,10 +172,25 @@ class App extends Component {
         });
       return;
     }
+
     const origin = step.start_location;
     const destination = step.end_location;
     GoogleDirectionStore.getDirections(origin, destination).then(res => {
       this.replaceDirections(step, res.routes[0].legs[0].steps, res.routes[0]);
+    });
+    if (mode === 'DRIVING') {
+      this.setState({ cars: [] });
+      if (origin) {
+        this.findCarLocation(origin.lat(), origin.lng());
+      }
+    }
+  };
+
+  findCarLocation = (lat, lng) => {
+    ModoStore.getNearby(lat, lng).then(() => {
+      ModoStore.findCarsFromLocation().then(() => {
+        this.setState({ cars: ModoStore.blankArray });
+      });
     });
   };
 
