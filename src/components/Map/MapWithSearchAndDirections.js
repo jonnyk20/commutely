@@ -14,7 +14,7 @@ import {
 } from 'react-google-maps';
 import { SearchBox } from 'react-google-maps/lib/components/places/SearchBox';
 
-import GoogleDirectionStore from '../../Stores/GoogleDirectionStore'
+import GoogleDirectionStore from '../../Stores/GoogleDirectionStore';
 import mapStyle from './mapStyle.json';
 
 let home;
@@ -26,7 +26,7 @@ const MapWithASearch = compose(
   withProps({
     loadingElement: <div style={{ height: `100%` }} />,
     containerElement: <div style={{ height: `300px` }} />,
-    mapElement: <div style={{ height: `100%` }} />,
+    mapElement: <div style={{ height: `100%` }} />
   }),
   lifecycle({
     componentWillMount() {
@@ -102,7 +102,6 @@ const MapWithASearch = compose(
       onBoundsChanged={props.onBoundsChanged}
       ref={props.onMapMounted}
       defaultOptions={{ styles: mapStyle }}>
-
       <SearchBox
         bounds={props.bounds}
         controlPosition={google.maps.ControlPosition.TOP_LEFT}
@@ -145,19 +144,19 @@ const MapWithASearch = compose(
       }
       )}
       {props.steps &&
-        props.steps.map(step => {
+        props.steps.map((step, i) => {
           let color = 'blue';
           switch (step.travel_mode) {
-            case ('WALKING'):
-              color = 'gray'
+            case 'WALKING':
+              color = 'gray';
               break;
-            case ('WALKING'):
+            case 'WALKING':
               color = 'yellow';
               break;
-            case ('DRIVING'):
+            case 'DRIVING':
               color = 'black';
               break;
-            case ('BICYCLING'):
+            case 'BICYCLING':
               color = 'orange';
               break;
             default:
@@ -168,7 +167,7 @@ const MapWithASearch = compose(
           }
           return (
             <Polyline
-              key={step.polyline.points}
+              key={i}
               path={step.lat_lngs}
               options={{
                 strokeColor: color,
