@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import GoogleDirectionStore from 'Stores/GoogleDirectionStore';
+import { styled } from 'styled-components';
 
 class Directions extends Component {
   render() {
@@ -40,6 +41,10 @@ class Directions extends Component {
                 key={i}
                 onClick={() => {
                   this.props.selectStep(step.id);
+                }}
+                style={{
+                  color: step.selected ? '#02e6f0' : 'black',
+                  cursor: 'pointer'
                 }}>{`steps: ${mode} ${distance} (${duration}) - ${instruction} `}</div>
             );
           })}
