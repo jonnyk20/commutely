@@ -40,7 +40,20 @@ class App extends Component {
   };
 
   replaceDirections = (oldStep, newSteps) => {
+    newSteps.forEach(step => step.new = true);
     console.log('new steps being replaced')
+    console.log('step to be Replaces', oldStep);
+    console.log('old Steps', this.state.steps);
+    console.log('index of old step');
+    console.log(this.state.steps.findIndex(step => step.id === oldStep.id));
+    console.log('newSteps', newSteps);
+    const newStepsArray = [...this.state.steps];
+    newStepsArray.splice(this.state.steps.findIndex(step => step.id === oldStep.id), 1, ...newSteps)
+    console.log('REPLACED STEPS');
+    console.log(newStepsArray);
+    this.setState({
+      steps: newStepsArray
+    })
   }
 
   setDirections = directions => {
@@ -98,7 +111,7 @@ class App extends Component {
     GoogleDirectionStore.mode = 'BICYCLING';
     GoogleDirectionStore.getDirections(origin, destination).then(res => {
       console.log('change to bike', res);
-      this.setDirections(res);
+      this.replaceDirections(step, res.routes[0].legs[0].steps);
       // res.routes[0].legs[0].steps.forEach(step => {
       //   bounds.extend(step.start_location);
       // });
