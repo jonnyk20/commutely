@@ -41,27 +41,18 @@ class App extends Component {
 
   replaceDirections = (oldStep, newSteps) => {
     newSteps.forEach(step => (step.new = true));
-    console.log('new steps being replaced');
-    console.log('step to be Replaces', oldStep);
-    console.log('old Steps', this.state.steps);
-    console.log('index of old step');
-    console.log(this.state.steps.findIndex(step => step.id === oldStep.id));
-    console.log('newSteps', newSteps);
     const newStepsArray = [...this.state.steps];
     newStepsArray.splice(
       this.state.steps.findIndex(step => step.id === oldStep.id),
       1,
       ...newSteps
     );
-    console.log('REPLACED STEPS');
-    console.log(newStepsArray);
     this.setState({
       steps: newStepsArray
     });
   };
 
   setDirections = directions => {
-    console.log('Settign directions in app');
     let stepId = 1;
     var points = [];
     var myRoute = directions.routes[0].legs[0];
@@ -72,7 +63,6 @@ class App extends Component {
       steps.push(step);
       stepId = stepId + 1;
     });
-    console.log('setting State with steps');
     this.setState({
       steps: steps,
       directions: directions
@@ -91,33 +81,22 @@ class App extends Component {
     });
   }
 
-  searchNewDirections = step => {
-    console.log('searchingfornewdirections');
-    console.log(step);
+  searchNewDirections = (step, mode) => {
     const origin = step.start_location;
     const destination = step.end_location;
-    // GoogleDirectionStore.
-    GoogleDirectionStore.mode = 'BICYCLING';
+    GoogleDirectionStore.mode = mode;
     GoogleDirectionStore.getDirections(origin, destination).then(res => {
-      console.log('change to bike', res);
       this.replaceDirections(step, res.routes[0].legs[0].steps);
-      // res.routes[0].legs[0].steps.forEach(step => {
-      //   bounds.extend(step.start_location);
-      // });
     });
   };
 
   render() {
-    console.log('rendering app');
     const { currentLocation, directions } = this.state;
     return (
       <div className="App">
         <div> Hey </div>
         {(() => {
-          console.log('here');
-          console.log(currentLocation);
           if (currentLocation && currentLocation.lat) {
-            console.log('here again');
             return (
               <div>
                 <MapWithSearchAndDirections
@@ -128,15 +107,13 @@ class App extends Component {
                   selectStep={this.selectStep}
                 />
                 {directions &&
-                  directions.routes && (
-                    <Directions directions={this.state.directions} />
-                  )}
-                {this.state.steps && (
+                  directions.routes &&
+                  <Directions directions={this.state.directions} />}
+                {this.state.steps &&
                   <SelectedStep
                     step={this.state.steps.find(step => step.selected)}
                     searchNewDirections={this.searchNewDirections}
-                  />
-                )}
+                  />}
               </div>
             );
           }
