@@ -94,7 +94,7 @@ const MapWithASearch = compose(
     }
   }),
   withGoogleMap
-)(props =>
+)(props => (
   <div>
     <GoogleMap
       center={props.currentLocation}
@@ -125,24 +125,24 @@ const MapWithASearch = compose(
           type="text"
         />
       </SearchBox>
-      {props.markers.map((marker, index) =>
+      {props.markers.map((marker, index) => (
         <Marker key={index} position={marker.position} />
-      )}
+      ))}
       {props.cars.map((car, index) => {
-        console.log('car', car);
         return (
-          <Marker key={index} position={{ lat: Number(car.lat), lng: Number(car.lng) }} icon={
-            {
+          <Marker
+            key={index}
+            position={{ lat: Number(car.lat), lng: Number(car.lng) }}
+            icon={{
               path: google.maps.SymbolPath.CIRCLE,
               scale: 10
-            }
-          }
-            onClick={() => { props.selectModo(car) }}
-          >
-          </Marker>
-        )
-      }
-      )}
+            }}
+            onClick={() => {
+              props.selectModo(car);
+            }}
+          />
+        );
+      })}
       {props.steps &&
         props.steps.map((step, i) => {
           let color = 'blue';
@@ -183,6 +183,6 @@ const MapWithASearch = compose(
       {props.directions && <DirectionsRenderer directions={props.directions} />}
     </GoogleMap>
   </div>
-);
+));
 
 export default MapWithASearch;
