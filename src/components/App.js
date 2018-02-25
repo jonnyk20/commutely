@@ -131,11 +131,11 @@ class App extends Component {
     });
   };
 
-  selectModo = (car) => {
-    console.log('Select Modo')
+  selectModo = car => {
+    console.log('Select Modo');
     console.log(car);
     // this.setState({ modoPopup: true, selectedCar: car });
-  }
+  };
 
   render() {
     const { currentLocation, directions } = this.state;
@@ -156,20 +156,22 @@ class App extends Component {
                   selectModo={this.selectModo}
                 />
                 {directions &&
-                  directions.routes &&
-                  <Directions
-                    selectStep={this.selectStep}
-                    directions={this.state.directions}
-                    steps={this.state.steps}
-                  />}
-                {this.state.steps &&
+                  directions.routes && (
+                    <Directions
+                      selectStep={this.selectStep}
+                      directions={this.state.directions}
+                      steps={this.state.steps}
+                    />
+                  )}
+                {this.state.steps && (
                   <SelectedStep
                     step={this.state.steps.find(step => step.selected)}
                     searchNewDirections={this.searchNewDirections}
                   />
-                }
-                {this.state.modoPopup && <ModoPopup selectedCar={this.state.selectedCar} />}
-                {/* {this.state.cars && <ModoButton carId={this.state.cars[0]} />} */}
+                )}
+                {this.state.modoPopup && (
+                  <ModoPopup selectedCar={this.state.selectedCar} />
+                )}
               </div>
             );
           }
