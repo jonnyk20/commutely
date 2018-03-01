@@ -1,6 +1,7 @@
 /* global google, firebase */
 import React, { Component } from 'react';
 import moment from 'moment';
+import CircularProgress from 'material-ui/CircularProgress';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import Popover from 'material-ui/Popover';
@@ -270,7 +271,18 @@ class App extends Component {
                 </div>
               );
             }
-            return <div>Loading...</div>;
+            return (
+              <CircularProgress
+                size={150}
+                thickness={5}
+                style={{
+                  position: 'fixed',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)'
+                }}
+              />
+            );
           })()}
         </div>
       </MuiThemeProvider>
