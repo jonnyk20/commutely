@@ -235,7 +235,7 @@ class App extends Component {
                     />
                   ) : (
                     <Paper style={paperStyle}>
-                      <span>Search for location to start</span>
+                      <span>Search for a destination to start</span>
                     </Paper>
                   )}
 

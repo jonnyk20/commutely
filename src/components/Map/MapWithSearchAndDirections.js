@@ -110,7 +110,7 @@ const MapWithASearch = compose(
         onPlacesChanged={props.onPlacesChanged}
         ref={props.onSearchBoxMounted}>
         <input
-          placeholder="Search for Location"
+          placeholder="Search for a destination"
           style={{
             boxSizing: `border-box`,
             border: `1px solid transparent`,
