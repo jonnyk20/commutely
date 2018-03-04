@@ -5,7 +5,7 @@ export default class NotificationResource {
   constructor(messaging, database) {
     this.messaging = messaging;
     this.database = database;
-    messaging.onMessage((message) => {
+    messaging.onMessage(message => {
       console.log('message received');
       console.log(message);
     });
@@ -18,24 +18,24 @@ export default class NotificationResource {
         })
         .catch(err => {
           console.log('no access', err);
-        })
+        });
     } catch (err) {
       console.log('No notification support. ', err);
     }
-    this.setupTokenRefresh()
+    this.setupTokenRefresh();
     this.database.ref('fcmTokens').on('value', snapshot => {
       this.allTokens = snapshot.val();
       this.tokensLoaded = true;
-    })
+    });
   }
 
-  notify = (message) => {
+  notify = message => {
     if (Notification.permission == 'granted') {
-      navigator.serviceWorker.getRegistration().then(function (reg) {
+      navigator.serviceWorker.getRegistration().then(function(reg) {
         reg.showNotification(message);
       });
     }
-  }
+  };
 
   setupTokenRefresh() {
     this.messaging.onTokenRefresh(() => {
@@ -44,26 +44,23 @@ export default class NotificationResource {
   }
 
   saveTokenToServer() {
-    console.log('savign token to server')
+    console.log('savign token to server');
     this.messaging.getToken().then(res => {
       if (true /* this.tokensLoaded */) {
         const existingToken = this.findExistingToken(res);
         if (existingToken) {
-          console.log('exists')
+          console.log('exists');
           // If it exists, replace
-          firebase
-            .database()
-            .ref(`/fcmTokens/${existingToken}`)
-            .set({
-              token: res //,
-              // user_id: this.user.uid
-            });
+          firebase.database().ref(`/fcmTokens/${existingToken}`).set({
+            token: res //,
+            // user_id: this.user.uid
+          });
         } else {
-          console.log('doesnt exist')
+          console.log('doesnt exist');
           this.registerToken(res);
         }
       }
-    })
+    });
   }
 
   findExistingToken(tokenToSave) {
@@ -78,19 +75,20 @@ export default class NotificationResource {
   changeUser(user) {
     //this.user = user;
     //this.saveTokenToServer();
-    console.log('change user')
+    console.log('change user');
   }
 
   registerToken(token) {
-    console.log('registering token', token)
     firebase
       .database()
       .ref('fcmTokens/')
       .push({
-        token: token//,
+        token: token //,
         // user_id: this.user.uid
       })
-      .then(res => console.log(res))
-      .catch(err => console.log(err))
+      .then(res => {
+        //console.log(res)
+      })
+      .catch(err => console.log(err));
   }
 }

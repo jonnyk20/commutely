@@ -34,8 +34,6 @@ class App extends Component {
     target: {}
   };
   setRefs = ref => {
-    console.log('setting Refs');
-    console.log('refs', ref);
     this.setState({
       refs: { map: ref }
     });
@@ -67,7 +65,6 @@ class App extends Component {
   }
 
   selectStep = stepId => {
-    console.log('selected: ', stepId);
     const newSteps = this.state.steps.map(step => {
       step.selected = step.id === stepId ? true : false;
       return step;
@@ -78,8 +75,7 @@ class App extends Component {
     });
   };
 
-  calculateNewStep = (steps, routes) => {
-    console.log(routes);
+  calculateNewStep = (steps, routes, oldStepId) => {
     let duration = 0;
     let distance = 0;
     const lat_lngs = [];
@@ -95,6 +91,8 @@ class App extends Component {
     const mode = steps[0].travel_mode.toLowerCase();
     const humanizeMode = mode.slice(0, 1).toUpperCase() + mode.slice(1);
     let newDirection = {
+      start_location: routes.legs[0].start_location,
+      end_location: routes.legs[0].end_location,
       duration: {
         text: moment.duration(duration, 'seconds').humanize(),
         value: duration
@@ -105,14 +103,23 @@ class App extends Component {
       },
       travel_mode: steps[0].travel_mode,
       instructions: `${humanizeMode} to ${routes.legs[0].end_address}`,
-      lat_lngs: lat_lngs
+      lat_lngs: lat_lngs,
+      id: oldStepId
     };
     return newDirection;
   };
 
   replaceDirections = (oldStep, newSteps, newRoutes) => {
+    console.log('oldStep: ', oldStep);
+    oldStep.selected = false;
+    console.log('after oldStep: ', oldStep);
     newSteps.forEach(step => (step.new = true));
-    const calculatedNewSteps = this.calculateNewStep(newSteps, newRoutes);
+    const calculatedNewSteps = this.calculateNewStep(
+      newSteps,
+      newRoutes,
+      oldStep.id
+    );
+
     const newStepsArray = [...this.state.steps];
     newStepsArray.splice(
       this.state.steps.findIndex(step => step.id === oldStep.id),
@@ -220,26 +227,25 @@ class App extends Component {
                     setDestination={this.setDestination}
                     setRefs={this.setRefs}
                   />
-                  {this.state.steps && (
+                  {this.state.steps &&
                     <SelectedStep
                       step={this.state.steps.find(step => step.selected)}
                       searchNewDirections={this.searchNewDirections}
-                    />
-                  )}
-                  {directions && directions.routes ? (
-                    <Directions
-                      selectStep={this.selectStep}
-                      directions={this.state.directions}
-                      steps={this.state.steps}
-                      searchNewDirections={this.searchNewDirections}
-                    />
-                  ) : (
-                    <Paper style={paperStyle}>
-                      <span>Search for a destination to start</span>
-                    </Paper>
-                  )}
+                    />}
+                  {directions && directions.routes
+                    ? <Directions
+                        selectStep={this.selectStep}
+                        directions={this.state.directions}
+                        steps={this.state.steps}
+                        searchNewDirections={this.searchNewDirections}
+                        showDetail={this.showDetail}
+                        details={this.state.detailSteps}
+                      />
+                    : <Paper style={paperStyle}>
+                        <span>Search for a destination to start</span>
+                      </Paper>}
 
-                  {this.state.modoPopup && (
+                  {this.state.modoPopup &&
                     <Popover
                       open={this.state.modoPopup}
                       anchorEl={this.state.target}
@@ -266,8 +272,7 @@ class App extends Component {
                         {this.state.selectedCar.seats}
                       </div>
                       <ModoButton selectedCar={this.state.selecedCar} />
-                    </Popover>
-                  )}
+                    </Popover>}
                 </div>
               );
             }

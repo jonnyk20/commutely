@@ -18,7 +18,8 @@ import PopoverStep from './PopoverStep';
 
 class Directions extends Component {
   state = {
-    openPopover: false
+    openPopover: false,
+    detailsSteps: ''
   };
 
   getModeIcon(mode) {
@@ -60,8 +61,32 @@ class Directions extends Component {
     });
   };
 
+  showDetail = step => {
+    console.log('step: ', step);
+    this.setState({ openPopover: false });
+    GoogleDirectionStore.showDetail = true;
+    const start_location = step.start_location;
+    const end_location = step.end_location;
+    GoogleDirectionStore.mode = step.travel_mode;
+    GoogleDirectionStore.getDirections(
+      start_location,
+      end_location
+    ).then(res => {
+      const steps = res.routes[0].legs[0].steps;
+      this.setState({ detailsSteps: steps });
+    });
+  };
+
+  selectMode = mode => {
+    const { steps } = this.props;
+    const step = steps.find(step => step.selected);
+    this.props.searchNewDirections(step, mode);
+    this.setState({ openPopover: false });
+  };
+
   render() {
     const { directions, steps, searchNewDirections } = this.props;
+    const { detailsSteps } = this.state;
     const leg = directions.routes[0].legs[0];
     let duration = 0;
     let distance = 0;
@@ -102,7 +127,6 @@ class Directions extends Component {
                   key={`icon-${i}`}
                   onClick={e => {
                     if (mode !== 'WALKING') {
-                      console.log('evet:', e.currentTarget);
                       this.setState({
                         openPopover: true,
                         anchorEl: e.currentTarget
@@ -127,6 +151,20 @@ class Directions extends Component {
                       }
                     }}
                   />
+                  {step.selected &&
+                    GoogleDirectionStore.showDetail &&
+                    detailsSteps &&
+                    detailsSteps.map((step, j) => {
+                      const instruction = step.instructions.replace(
+                        /<\/?[^>]+(>|$)/g,
+                        ''
+                      );
+                      return (
+                        <div key={`detail-step-${j}`}>
+                          {instruction}
+                        </div>
+                      );
+                    })}
                 </div>
               );
             })}
@@ -138,7 +176,8 @@ class Directions extends Component {
               onRequestClose={this.handleRequestClose}>
               <PopoverStep
                 step={steps.find(step => step.selected)}
-                searchNewDirections={searchNewDirections}
+                selectNewMode={this.selectMode}
+                showDetail={this.showDetail}
               />
             </Popover>
             <TotalText>

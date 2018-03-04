@@ -5,6 +5,7 @@ class GoogleDirectionStore {
     this.DirectionsService = new google.maps.DirectionsService();
     //always default to transit
     this.mode = 'TRANSIT';
+    this.showDetail = false;
   }
   getDirections = (origin, destination) => {
     return new Promise((resolve, reject) => {

@@ -1,32 +1,42 @@
 import React, { Component } from 'react';
 import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
-
+import Divider from 'material-ui/Divider';
+import GoogleDirectionStore from 'Stores/GoogleDirectionStore';
 class PopoverStep extends Component {
   handleClick(mode) {
-    console.log('handling click');
-    console.log('mode', mode);
-    console.log('this.props.step', this.props.step);
     this.props.searchNewDirections(this.props.step, mode);
   }
 
   render() {
-    const { step } = this.props;
-
+    const { step, selectNewMode, showDetail } = this.props;
     return (
       <div>
         <Menu>
           <MenuItem
             primaryText="Bike"
-            onClick={this.handleClick.bind(this, 'BICYCLING')}
+            onClick={() => {
+              selectNewMode('BICYCLING');
+            }}
           />
           <MenuItem
             primaryText="Car Share"
-            onClick={this.handleClick.bind(this, 'DRIVING')}
+            onClick={() => {
+              selectNewMode('DRIVING');
+            }}
           />
           <MenuItem
             primaryText="Transit"
-            onClick={this.handleClick.bind(this, 'TRANSIT')}
+            onClick={() => {
+              selectNewMode('TRANSIT');
+            }}
+          />
+          <Divider />
+          <MenuItem
+            primaryText="Details"
+            onClick={() => {
+              showDetail(step);
+            }}
           />
         </Menu>
       </div>
