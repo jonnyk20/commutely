@@ -30,7 +30,7 @@ export default class NotificationResource {
   }
 
   notify = message => {
-    if (Notification.permission == 'granted') {
+    if (Notification.permission === 'granted') {
       navigator.serviceWorker.getRegistration().then(function(reg) {
         reg.showNotification(message);
       });
@@ -44,17 +44,20 @@ export default class NotificationResource {
   }
 
   saveTokenToServer() {
-    console.log('savign token to server');
+    console.log('saving token to server');
     this.messaging.getToken().then(res => {
       if (true /* this.tokensLoaded */) {
         const existingToken = this.findExistingToken(res);
         if (existingToken) {
           console.log('exists');
           // If it exists, replace
-          firebase.database().ref(`/fcmTokens/${existingToken}`).set({
-            token: res //,
-            // user_id: this.user.uid
-          });
+          firebase
+            .database()
+            .ref(`/fcmTokens/${existingToken}`)
+            .set({
+              token: res //,
+              // user_id: this.user.uid
+            });
         } else {
           console.log('doesnt exist');
           this.registerToken(res);

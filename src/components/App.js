@@ -227,25 +227,28 @@ class App extends Component {
                     setDestination={this.setDestination}
                     setRefs={this.setRefs}
                   />
-                  {this.state.steps &&
+                  {this.state.steps && (
                     <SelectedStep
                       step={this.state.steps.find(step => step.selected)}
                       searchNewDirections={this.searchNewDirections}
-                    />}
-                  {directions && directions.routes
-                    ? <Directions
-                        selectStep={this.selectStep}
-                        directions={this.state.directions}
-                        steps={this.state.steps}
-                        searchNewDirections={this.searchNewDirections}
-                        showDetail={this.showDetail}
-                        details={this.state.detailSteps}
-                      />
-                    : <Paper style={paperStyle}>
-                        <span>Search for a destination to start</span>
-                      </Paper>}
+                    />
+                  )}
+                  {directions && directions.routes ? (
+                    <Directions
+                      selectStep={this.selectStep}
+                      directions={this.state.directions}
+                      steps={this.state.steps}
+                      searchNewDirections={this.searchNewDirections}
+                      showDetail={this.showDetail}
+                      details={this.state.detailSteps}
+                    />
+                  ) : (
+                    <Paper style={paperStyle}>
+                      <span>Search for a destination to start</span>
+                    </Paper>
+                  )}
 
-                  {this.state.modoPopup &&
+                  {this.state.modoPopup && (
                     <Popover
                       open={this.state.modoPopup}
                       anchorEl={this.state.target}
@@ -255,24 +258,13 @@ class App extends Component {
                       onRequestClose={() => {
                         this.setState({
                           modoPopup: false,
-                          selecedCar: {},
+                          selectedCar: {},
                           target: {}
                         });
                       }}>
-                      <div>
-                        <b>Type: </b>
-                        {this.state.selectedCar.category}
-                      </div>
-                      <div>
-                        <b>Model: </b>
-                        {this.state.selectedCar.model}
-                      </div>
-                      <div>
-                        <b>Seats: </b>
-                        {this.state.selectedCar.seats}
-                      </div>
-                      <ModoButton selectedCar={this.state.selecedCar} />
-                    </Popover>}
+                      <ModoButton selectedCar={this.state.selectedCar} />
+                    </Popover>
+                  )}
                 </div>
               );
             }

@@ -1,10 +1,11 @@
 import FetchResource from '../Resources/FetchResource';
+import { observable } from 'mobx';
 
 class ModoStore {
-  nearby = [];
-  locations = [];
-  blankArray = [];
-  isLoading = true;
+  @observable nearby = [];
+  @observable locations = [];
+  @observable blankArray = [];
+  @observable isLoading = true;
 
   getNearby(lat, lng) {
     return new Promise(resolve => {
@@ -116,9 +117,7 @@ class ModoStore {
                 }
               });
             });
-            setTimeout(function() {
-              resolve();
-            }, 1500);
+            resolve();
           }
         });
       }
