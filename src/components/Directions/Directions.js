@@ -155,6 +155,12 @@ class Directions extends Component {
                     GoogleDirectionStore.showDetail &&
                     detailsSteps &&
                     detailsSteps.map((step, j) => {
+                      let transitInstruction;
+                      if (step.travel_mode === 'TRANSIT') {
+                        transitInstruction = `${step.transit.departure_stop
+                          .name} - ${step.transit.arrival_stop.name} (${step
+                          .transit.num_stops} stop(s))`;
+                      }
                       const instruction = step.instructions.replace(
                         /<\/?[^>]+(>|$)/g,
                         ''
@@ -162,6 +168,10 @@ class Directions extends Component {
                       return (
                         <div key={`detail-step-${j}`}>
                           {instruction}
+                          {transitInstruction &&
+                            <div>
+                              {transitInstruction}
+                            </div>}
                         </div>
                       );
                     })}
