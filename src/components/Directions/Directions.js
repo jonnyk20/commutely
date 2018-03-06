@@ -34,7 +34,10 @@ class Directions extends Component {
     }
   }
 
-  getBackgroundColor(mode) {
+  getBackgroundColor(mode, selected) {
+    if (selected) {
+      return 'green';
+    }
     switch (mode) {
       case 'TRANSIT':
         return '#66CCFF';
@@ -59,7 +62,6 @@ class Directions extends Component {
   };
 
   showDetail = step => {
-    console.log('step: ', step);
     this.setState({ openPopover: false });
     GoogleDirectionStore.showDetail = true;
     const start_location = step.start_location;
@@ -111,6 +113,7 @@ class Directions extends Component {
           </TotalText>
           <div>
             {steps.map((step, i) => {
+              const { selected } = step;
               const distance = step.distance.text;
               const duration = step.duration.text;
               const mode = step.travel_mode;
@@ -134,7 +137,7 @@ class Directions extends Component {
                     }
                     overlayStyle={{ textAlign: 'left' }}
                     disabledLabelColor={mode === 'WALKING' ? '#000000' : ''}
-                    backgroundColor={this.getBackgroundColor(mode)}
+                    backgroundColor={this.getBackgroundColor(mode, selected)}
                     disabled={mode === 'WALKING' ? true : false}
                     icon={this.getModeIcon(mode)}
                     label={`${humanizeMode} ${distance} (${duration})`}

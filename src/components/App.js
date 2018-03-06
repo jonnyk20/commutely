@@ -121,9 +121,7 @@ class App extends Component {
   };
 
   replaceDirections = (oldStep, newSteps, newRoutes) => {
-    console.log('oldStep: ', oldStep);
     oldStep.selected = false;
-    console.log('after oldStep: ', oldStep);
     newSteps.forEach(step => (step.new = true));
     const calculatedNewSteps = this.calculateNewStep(
       newSteps,
@@ -180,7 +178,6 @@ class App extends Component {
     }
     let firstHalf;
     let secondHalf;
-    console.log('switching from this point by', this.state.selectedStep.travel_mode);
     GoogleDirectionStore.mode = this.state.selectedStep.travel_mode;
     GoogleDirectionStore.getDirections(
       //Get directions from start of step to point
@@ -219,12 +216,10 @@ class App extends Component {
       )
         .then(res => {
           this.setDirections(res);
-
           res.routes[0].legs[0].steps.forEach(step => {
             bounds.extend(step.start_location);
           });
           this.state.refs.map.fitBounds(bounds);
-
           if (mode === 'DRIVING') {
             this.setState({ cars: [] });
             if (this.state.currentLocation) {
