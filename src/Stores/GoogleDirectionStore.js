@@ -7,13 +7,13 @@ class GoogleDirectionStore {
     this.mode = 'TRANSIT';
     this.showDetail = false;
   }
-  getDirections = (origin, destination) => {
+  getDirections = (origin, destination, mode) => {
     return new Promise((resolve, reject) => {
       this.DirectionsService.route(
         {
           origin: origin,
           destination: destination,
-          travelMode: google.maps.TravelMode[this.mode]
+          travelMode: google.maps.TravelMode[mode || this.mode]
         },
         (result, status) => {
           if (status === google.maps.DirectionsStatus.OK) {

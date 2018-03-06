@@ -178,18 +178,18 @@ class App extends Component {
     }
     let firstHalf;
     let secondHalf;
-    GoogleDirectionStore.mode = this.state.selectedStep.travel_mode;
     GoogleDirectionStore.getDirections(
       //Get directions from start of step to point
       this.state.waypoints[0] || this.state.currentLocation,
-      this.state.selectedPoint
+      this.state.selectedPoint,
+      this.state.selectedStep.travel_mode
     ).then((res) => {
       firstHalf = res;
-      GoogleDirectionStore.mode = mode;
       return GoogleDirectionStore.getDirections(
         //Get directions from start of step to point
         this.state.selectedPoint,
-        this.state.destination
+        this.state.destination,
+        mode
       ).then((res) => {
         secondHalf = res;
         this.replaceDirectionsFromPoint(this.state.selectedStep, firstHalf.routes[0].legs[0].steps, firstHalf.routes[0], secondHalf.routes[0].legs[0].steps, secondHalf.routes[0]);
@@ -207,12 +207,12 @@ class App extends Component {
 
   searchNewDirections = (step, mode) => {
     // tryign to use point instead of step
-    GoogleDirectionStore.mode = mode;
     const bounds = new google.maps.LatLngBounds();
     if (!step) {
       GoogleDirectionStore.getDirections(
         this.state.currentLocation,
-        this.state.destination
+        this.state.destination,
+        mode
       )
         .then(res => {
           this.setDirections(res);
@@ -239,7 +239,7 @@ class App extends Component {
 
     const origin = step.start_location;
     const destination = step.end_location;
-    GoogleDirectionStore.getDirections(origin, destination).then(res => {
+    GoogleDirectionStore.getDirections(origin, destination, mode).then(res => {
       this.replaceDirections(step, res.routes[0].legs[0].steps, res.routes[0]);
     });
     if (mode === 'DRIVING') {

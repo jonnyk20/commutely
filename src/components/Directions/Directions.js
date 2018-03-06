@@ -66,10 +66,10 @@ class Directions extends Component {
     GoogleDirectionStore.showDetail = true;
     const start_location = step.start_location;
     const end_location = step.end_location;
-    GoogleDirectionStore.mode = step.travel_mode;
     GoogleDirectionStore.getDirections(
       start_location,
-      end_location
+      end_location,
+      step.travel_mode
     ).then(res => {
       const steps = res.routes[0].legs[0].steps;
       this.setState({ detailsSteps: steps });
