@@ -1,5 +1,6 @@
 /* global google */
 import React from 'react';
+import FaAnchor from 'react-icons/lib/fa/anchor';
 
 import _ from 'lodash';
 import { compose, withProps, lifecycle } from 'recompose';
@@ -13,6 +14,7 @@ import {
   InfoWindow
 } from 'react-google-maps';
 import { SearchBox } from 'react-google-maps/lib/components/places/SearchBox';
+import FlatButton from 'material-ui/FlatButton';
 
 import GoogleDirectionStore from '../../Stores/GoogleDirectionStore';
 import mapStyle from './mapStyle.json';
@@ -131,6 +133,28 @@ const MapWithASearch = compose(
       {props.markers.map((marker, index) => (
         <Marker key={index} position={marker.position} />
       ))}
+      {props.selectedPoint &&
+        <Marker
+          position={props.selectedPoint}
+          icon={{
+            path: google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
+            scale: 5
+          }}
+          onClick={e => {
+            console.log('point clicked')
+          }}
+        >
+          <InfoWindow >
+            <div>
+              <div onClick={() => { props.switchFromPoint('WALKING') }}> Walk </div>
+              <div onClick={() => { props.switchFromPoint('DRIVING') }}> Drive </div>
+              <div onClick={() => { props.switchFromPoint('TRANSIT') }}> Transit </div>
+              <div onClick={() => { props.switchFromPoint('BICYCLING') }}> Bike </div>
+            </div>
+          </InfoWindow>
+
+        </Marker>
+      }
       {props.cars.map((car, index) => {
         return (
           <Marker
@@ -176,10 +200,11 @@ const MapWithASearch = compose(
                 strokeColor: color,
                 strokeWeight: 5
               }}
-              onClick={() => {
+              onClick={(e) => {
                 if (!step.new) {
-                  props.selectStep(step.id);
+                  props.selectStep(step);
                 }
+                props.selectPoint(e);
               }}
             />
           );

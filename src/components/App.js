@@ -31,7 +31,8 @@ class App extends Component {
     cars: [],
     modoPopup: false,
     selectedCar: {},
-    target: {}
+    target: {},
+    waypoints: []
   };
   setRefs = ref => {
     this.setState({
@@ -45,6 +46,13 @@ class App extends Component {
     });
   };
 
+  selectPoint = (e) => {
+    console.log('point selected', e);
+    this.setState({
+      selectedPoint: e.latLng
+    });
+  }
+
   componentDidMount() {
     if (navigator && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(pos => {
@@ -57,21 +65,23 @@ class App extends Component {
       });
     }
     // experimental firebase stuff
-    this.notifications = new NotificationResource(
-      firebase.messaging(),
-      firebase.database()
-    );
+    // this.notifications = new NotificationResource(
+    //   firebase.messaging(),
+    //   firebase.database()
+    // );
     //this.notifications.notify('hey');
   }
 
-  selectStep = stepId => {
-    const newSteps = this.state.steps.map(step => {
-      step.selected = step.id === stepId ? true : false;
-      return step;
+  selectStep = step => {
+    console.log('selected: ', step);
+    const newSteps = this.state.steps.map(item => {
+      item.selected = item.id === step.id ? true : false;
+      return item;
     });
 
     this.setState({
-      steps: newSteps
+      steps: newSteps,
+      selectedStep: step
     });
   };
 
@@ -93,6 +103,7 @@ class App extends Component {
     let newDirection = {
       start_location: routes.legs[0].start_location,
       end_location: routes.legs[0].end_location,
+      id: lat_lngs,
       duration: {
         text: moment.duration(duration, 'seconds').humanize(),
         value: duration
@@ -132,6 +143,20 @@ class App extends Component {
     GoogleDirectionStore.mode = 'TRANSIT';
   };
 
+  replaceDirectionsFromPoint = (oldStep, firstHalfSteps, firstHalfRoutes, secondHalfSteps, secondHalfRoutes) => {
+    const wayPointExists = !!this.state.waypoints[0];
+
+    firstHalfSteps.forEach(step => (step.new = true));
+    const calculatedfirstHalfSteps = this.calculateNewStep(firstHalfSteps, firstHalfRoutes);
+    const calculatedsecondHalfSteps = this.calculateNewStep(secondHalfSteps, secondHalfRoutes);
+    calculatedfirstHalfSteps.travel_mode = this.state.selectedStep.travel_mode;
+    const newStepsArray = [calculatedfirstHalfSteps, calculatedsecondHalfSteps];
+    this.setState({
+      steps: wayPointExists ? [this.state.steps[0], ...newStepsArray] : newStepsArray
+    });
+    GoogleDirectionStore.mode = 'TRANSIT';
+  };
+
   setDirections = directions => {
     let stepId = 1;
     var myRoute = directions.routes[0].legs[0];
@@ -148,7 +173,43 @@ class App extends Component {
     });
   };
 
+  switchFromPoint = (mode) => {
+    if (this.state.waypoints.length >= 2) {
+      console.log('only 2 switches can be made');
+      return;
+    }
+    let firstHalf;
+    let secondHalf;
+    console.log('switching from this point by', this.state.selectedStep.travel_mode);
+    GoogleDirectionStore.mode = this.state.selectedStep.travel_mode;
+    GoogleDirectionStore.getDirections(
+      //Get directions from start of step to point
+      this.state.waypoints[0] || this.state.currentLocation,
+      this.state.selectedPoint
+    ).then((res) => {
+      firstHalf = res;
+      GoogleDirectionStore.mode = mode;
+      return GoogleDirectionStore.getDirections(
+        //Get directions from start of step to point
+        this.state.selectedPoint,
+        this.state.destination
+      ).then((res) => {
+        secondHalf = res;
+        this.replaceDirectionsFromPoint(this.state.selectedStep, firstHalf.routes[0].legs[0].steps, firstHalf.routes[0], secondHalf.routes[0].legs[0].steps, secondHalf.routes[0]);
+        if (mode === 'DRIVING') {
+          this.setState({ cars: [] });
+          this.findCarLocation(this.state.selectedPoint.lat(), this.state.selectedPoint.lng());
+        }
+        this.setState({
+          waypoints: [...this.state.waypoints, this.state.selectedPoint]
+        })
+      });
+    })
+
+  }
+
   searchNewDirections = (step, mode) => {
+    // tryign to use point instead of step
     GoogleDirectionStore.mode = mode;
     const bounds = new google.maps.LatLngBounds();
     if (!step) {
@@ -225,6 +286,9 @@ class App extends Component {
                     selectModo={this.selectModo}
                     setDestination={this.setDestination}
                     setRefs={this.setRefs}
+                    selectPoint={this.selectPoint}
+                    selectedPoint={this.state.selectedPoint}
+                    switchFromPoint={this.switchFromPoint}
                   />
                   {this.state.steps && (
                     <SelectedStep
