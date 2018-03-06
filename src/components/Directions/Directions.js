@@ -11,9 +11,6 @@ import NotificationDriveEta from 'material-ui/svg-icons/notification/drive-eta';
 import MapsPlace from 'material-ui/svg-icons/maps/place';
 import RaisedButton from 'material-ui/RaisedButton';
 import Popover from 'material-ui/Popover';
-import Menu from 'material-ui/Menu';
-import MenuItem from 'material-ui/MenuItem';
-import Step from './Step';
 import PopoverStep from './PopoverStep';
 
 class Directions extends Component {
@@ -85,7 +82,7 @@ class Directions extends Component {
   };
 
   render() {
-    const { directions, steps, searchNewDirections } = this.props;
+    const { directions, steps } = this.props;
     const { detailsSteps } = this.state;
     const leg = directions.routes[0].legs[0];
     let duration = 0;
@@ -116,10 +113,6 @@ class Directions extends Component {
             {steps.map((step, i) => {
               const distance = step.distance.text;
               const duration = step.duration.text;
-              const instruction = step.instructions.replace(
-                /<\/?[^>]+(>|$)/g,
-                ''
-              );
               const mode = step.travel_mode;
               const humanizeMode = this.capitalize(mode);
               return (
@@ -159,7 +152,7 @@ class Directions extends Component {
                       if (step.travel_mode === 'TRANSIT') {
                         transitInstruction = `${step.transit.departure_stop
                           .name} - ${step.transit.arrival_stop.name} (${step
-                          .transit.num_stops} stop(s))`;
+                            .transit.num_stops} stop(s))`;
                       }
                       const instruction = step.instructions.replace(
                         /<\/?[^>]+(>|$)/g,

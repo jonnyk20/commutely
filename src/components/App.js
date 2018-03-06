@@ -7,7 +7,7 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import Popover from 'material-ui/Popover';
 import Paper from 'material-ui/Paper';
 
-import { styles, palette } from '../styles/Theme';
+import { styles } from '../styles/Theme';
 import ModoStore from '../Stores/ModoStore';
 import GoogleDirectionStore from '../Stores/GoogleDirectionStore';
 import MapWithSearchAndDirections from './Map/MapWithSearchAndDirections';
@@ -134,7 +134,6 @@ class App extends Component {
 
   setDirections = directions => {
     let stepId = 1;
-    var points = [];
     var myRoute = directions.routes[0].legs[0];
     const steps = [];
     myRoute.steps.forEach(step => {
@@ -243,10 +242,10 @@ class App extends Component {
                       details={this.state.detailSteps}
                     />
                   ) : (
-                    <Paper style={paperStyle}>
-                      <span>Search for a destination to start</span>
-                    </Paper>
-                  )}
+                      <Paper style={paperStyle}>
+                        <span>Search for a destination to start</span>
+                      </Paper>
+                    )}
 
                   {this.state.modoPopup && (
                     <Popover
